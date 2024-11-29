@@ -53,35 +53,35 @@ class LinkedListMemoryManager:
     
 
 # Initialize the memory manager
-manager = LinkedListMemoryManager()
+# manager = LinkedListMemoryManager()
 
-# Add memory blocks
-manager.add_block(50)   # Add a 50MB block
-manager.add_block(100)  # Add a 100MB block
-manager.add_block(200)  # Add a 200MB block
+# # Add memory blocks
+# manager.add_block(50)   # Add a 50MB block
+# manager.add_block(100)  # Add a 100MB block
+# manager.add_block(200)  # Add a 200MB block
 
-# Display initial memory state
-print("Initial Memory State:")
-print(manager.display_memory())
+# # Display initial memory state
+# print("Initial Memory State:")
+# print(manager.display_memory())
 
-# Allocate memory
-print("\nAllocating 30MB:")
-print(manager.allocate(30))
-print(manager.display_memory())
+# # Allocate memory
+# print("\nAllocating 30MB:")
+# print(manager.allocate(30))
+# print(manager.display_memory())
 
-# Allocate more memory
-print("\nAllocating 120MB:")
-print(manager.allocate(120))
-print(manager.display_memory())
+# # Allocate more memory
+# print("\nAllocating 120MB:")
+# print(manager.allocate(120))
+# print(manager.display_memory())
 
-# Deallocate memory
-print("\nDeallocating 120MB:")
-print(manager.deallocate(120))
-print(manager.display_memory())
+# # Deallocate memory
+# print("\nDeallocating 120MB:")
+# print(manager.deallocate(120))
+# print(manager.display_memory())
 
-# Attempt to allocate more than available
-print("\nAllocating 300MB:")
-print(manager.allocate(300))
-print(manager.display_memory())
+# # Attempt to allocate more than available
+# print("\nAllocating 300MB:")
+# print(manager.allocate(300))
+# print(manager.display_memory())
 
 
