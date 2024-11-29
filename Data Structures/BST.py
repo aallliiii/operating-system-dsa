@@ -52,14 +52,14 @@ class BinarySearchTree:
             result.append(current.key)
             self._inorder_recursive(current.right,result)
 
-bst=BinarySearchTree()
-bst.insert(5)
-bst.insert(3)
-bst.insert(7)
-bst.insert(2)
-bst.insert(4)
-bst.insert(6)
-print(bst.search(4)) # Output: File 4 found
-print(bst.search(9)) # Output: File not found
-print(bst.search(2))
-print(bst.inorder()) 
+# bst=BinarySearchTree()
+# bst.insert(5)
+# bst.insert(3)
+# bst.insert(7)
+# bst.insert(2)
+# bst.insert(4)
+# bst.insert(6)
+# print(bst.search(4)) # Output: File 4 found
+# print(bst.search(9)) # Output: File not found
+# print(bst.search(2))
+# print(bst.inorder()) 

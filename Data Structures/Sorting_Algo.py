@@ -27,5 +27,5 @@ class SortingAlgorihtm:
                 k += 1
         return arr
     
-arr=[1,4,3,9,55,67,99]
-print(SortingAlgorihtm.merge_sort(arr))
+# arr=[1,4,3,9,55,67,99]
+# print(SortingAlgorihtm.merge_sort(arr))

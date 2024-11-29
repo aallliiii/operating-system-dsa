@@ -28,9 +28,9 @@ class PriorityQueue:
         return len(self._queue) == 0
         
 
-P_Q=PriorityQueue()
-P_Q.enqueue("TaskA", 3)
-P_Q.enqueue("TaskB", 1)
-P_Q.enqueue("TaskC", 2)
-item,priority=P_Q.dequeue()
-print(item,priority)  # Output: ('A', 3)
+# P_Q=PriorityQueue()
+# P_Q.enqueue("TaskA", 3)
+# P_Q.enqueue("TaskB", 1)
+# P_Q.enqueue("TaskC", 2)
+# item,priority=P_Q.dequeue()
+# print(item,priority)  # Output: ('A', 3)
