@@ -130,6 +130,7 @@ class DataStructureApp(QMainWindow):
         task = self.task_input.text()
         try:
             priority = int(self.task_priority.text())
+            
             self.task_scheduler.enqueue(priority, task)
             self.task_list.addItem(f"{task} (Priority: {priority})")
             self.task_input.clear()
