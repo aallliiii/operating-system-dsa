@@ -42,9 +42,22 @@ class LinkedListMemoryManager:
     def deallocate(self, size):
         current = self.head
         while current:
-            if current.allocated :
-                current.size+=size
+            if current.allocated and current.size == size:
+                
                 current.allocated = False
+
+                if current.next and not current.next.allocated:
+                    current.size += current.next.size
+                    current.next = current.next.next
+
+                if self.head != current:
+                    previous = self.head
+                    while previous.next != current:
+                        previous = previous.next
+                    if not previous.allocated:
+                        previous.size += current.size
+                        previous.next = current.next
+
                 return f"Deallocated {size}MB."
             current = current.next
         return "No block to deallocate"

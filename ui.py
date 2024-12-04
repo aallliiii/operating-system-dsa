@@ -172,9 +172,14 @@ class DataStructureApp(QMainWindow):
             self.memory_output.append("Invalid memory size.")
 
     def deallocate_memory(self):
-        result = self.memory_manager.deallocate()
-        self.memory_output.append(result)
-        self.update_memory_output()
+        try:
+            size = int(self.memory_input.text())
+
+            result = self.memory_manager.deallocate(size)
+            self.memory_output.append(result)
+            self.update_memory_output()
+        except ValueError:
+            self.memory_output.append("Invalid memory size.")
 
     def update_memory_output(self):
         self.memory_output.setText(self.memory_manager.display_memory())
