@@ -16,7 +16,7 @@ class DataStructureApp(QMainWindow):
         # Data structures
         
         self.task_manager = ManageTasks()
-        self.memory_manager = LinkedListMemoryManager()
+        # self.memory_manager = LinkedListMemoryManager()
         self.file_system = BinarySearchTree()
         self.network_graph = Graph()
         self.update_memory_output()
@@ -156,35 +156,35 @@ class DataStructureApp(QMainWindow):
 
 
     # Memory Manager Functions
-    def add_memory_block(self):
-        try:
-            size = int(self.memory_input.text())
-            self.memory_manager.add_block(size)
-            self.update_memory_output()
-            self.memory_input.clear()
-        except ValueError:
-            self.memory_output.append("Invalid memory size.")
+    # def add_memory_block(self):
+    #     try:
+    #         size = int(self.memory_input.text())
+    #         self.memory_manager.add_block(size)
+    #         self.update_memory_output()
+    #         self.memory_input.clear()
+    #     except ValueError:
+    #         self.memory_output.append("Invalid memory size.")
 
-    def allocate_memory(self):
+    # def allocate_memory(self):
         
-        try:
-            size = int(self.memory_input.text())
-            result = self.memory_manager.allocate(size)
-            self.memory_output.append(result)
-            self.update_memory_output()
-            self.memory_input.clear()
-        except ValueError:
-            self.memory_output.append("Invalid memory size.")
+    #     try:
+    #         size = int(self.memory_input.text())
+    #         result = self.memory_manager.allocate(size)
+    #         self.memory_output.append(result)
+    #         self.update_memory_output()
+    #         self.memory_input.clear()
+    #     except ValueError:
+    #         self.memory_output.append("Invalid memory size.")
 
-    def deallocate_memory(self):
-        try:
-            size = int(self.memory_input.text())
+    # def deallocate_memory(self):
+    #     try:
+    #         size = int(self.memory_input.text())
 
-            result = self.memory_manager.deallocate(size)
-            self.memory_output.append(result)
-            self.update_memory_output()
-        except ValueError:
-            self.memory_output.append("Invalid memory size.")
+    #         result = self.memory_manager.deallocate(size)
+    #         self.memory_output.append(result)
+    #         self.update_memory_output()
+    #     except ValueError:
+    #         self.memory_output.append("Invalid memory size.")
 
     def update_memory_output(self):
         self.memory_output.setText(self.task_manager.display_memory())
