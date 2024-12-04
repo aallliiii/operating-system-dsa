@@ -1,5 +1,6 @@
 import sys
 from DataStructures.priority_Queue import PriorityQueue
+from manageTasks import ManageTasks
 from DataStructures.linked_list import LinkedListMemoryManager
 from DataStructures.Graph import Graph
 from DataStructures.BST import BinarySearchTree
@@ -15,6 +16,7 @@ class DataStructureApp(QMainWindow):
 
         # Data structures
         self.task_scheduler = PriorityQueue()
+        self.task_manager = ManageTasks()
         self.memory_manager = LinkedListMemoryManager()
         self.file_system = BinarySearchTree()
         self.network_graph = Graph()
@@ -131,7 +133,7 @@ class DataStructureApp(QMainWindow):
         try:
             priority = int(self.task_priority.text())
             
-            self.task_scheduler.enqueue(priority, task)
+            self.task_manager.addTasksToQueue(task, priority)
             self.task_list.addItem(f"{task} (Priority: {priority})")
             self.task_input.clear()
             self.task_priority.clear()
@@ -139,10 +141,17 @@ class DataStructureApp(QMainWindow):
             self.task_list.addItem("Invalid priority value.")
 
     def execute_task(self):
-        while not self.task_scheduler.is_empty():  # Check if the queue is not empty
-            task, priority = self.task_scheduler.dequeue()
-            self.task_list.addItem(f"Executed: {task} (Priority: {priority})")
-        self.task_list.addItem("All tasks executed.")  # Message after clearing the queue
+        # while not self.task_scheduler.is_empty():  # Check if the queue is not empty
+        #     task, priority = self.task_scheduler.dequeue()
+        #     self.task_list.addItem(f"Executed: {task} (Priority: {priority})")
+        # self.task_list.addItem("All tasks executed.")  # Message after clearing the queue
+        executed_tasks = self.task_manager.execute_tasks()
+        if executed_tasks:
+            for task, priority in executed_tasks:
+                self.task_list.addItem(f"Executed: {task} (Priority: {priority})")
+            self.task_list.addItem("All tasks executed.")  # Message after clearing the queue
+        else:
+            self.task_list.addItem("No tasks to execute.")
 
 
     # Memory Manager Functions
