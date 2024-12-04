@@ -19,6 +19,7 @@ class DataStructureApp(QMainWindow):
         self.memory_manager = LinkedListMemoryManager()
         self.file_system = BinarySearchTree()
         self.network_graph = Graph()
+        self.update_memory_output()
 
     def init_ui(self):
         self.setWindowTitle("Data Structures UI")
@@ -73,6 +74,7 @@ class DataStructureApp(QMainWindow):
         self.add_memory_btn.clicked.connect(self.add_memory_block)
         self.allocate_memory_btn.clicked.connect(self.allocate_memory)
         self.deallocate_memory_btn.clicked.connect(self.deallocate_memory)
+        
 
         # File System Section
         self.file_output = QTextEdit()
@@ -125,6 +127,7 @@ class DataStructureApp(QMainWindow):
 
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
+        
 
     # Task Scheduler Functions
     def add_task(self):
@@ -136,6 +139,7 @@ class DataStructureApp(QMainWindow):
             self.task_list.addItem(f"{task} (Priority: {priority})")
             self.task_input.clear()
             self.task_priority.clear()
+            self.update_memory_output()
         except ValueError:
             self.task_list.addItem("Invalid priority value.")
 
@@ -146,6 +150,7 @@ class DataStructureApp(QMainWindow):
             for task, priority in executed_tasks:
                 self.task_list.addItem(f"Executed: {task} (Priority: {priority})")
             self.task_list.addItem("All tasks executed.")  
+            self.update_memory_output()
         else:
             self.task_list.addItem("No tasks to execute.")
 
@@ -182,7 +187,7 @@ class DataStructureApp(QMainWindow):
             self.memory_output.append("Invalid memory size.")
 
     def update_memory_output(self):
-        self.memory_output.setText(self.memory_manager.display_memory())
+        self.memory_output.setText(self.task_manager.display_memory())
 
     # File System Functions
     def add_file(self):
