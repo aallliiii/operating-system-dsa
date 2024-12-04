@@ -139,11 +139,11 @@ class DataStructureApp(QMainWindow):
             self.task_list.addItem("Invalid priority value.")
 
     def execute_task(self):
-        task, priority = self.task_scheduler.dequeue()
-        if task:
+        while not self.task_scheduler.is_empty():  # Check if the queue is not empty
+            task, priority = self.task_scheduler.dequeue()
             self.task_list.addItem(f"Executed: {task} (Priority: {priority})")
-        else:
-            self.task_list.addItem("No tasks to execute.")
+        self.task_list.addItem("All tasks executed.")  # Message after clearing the queue
+
 
     # Memory Manager Functions
     def add_memory_block(self):
