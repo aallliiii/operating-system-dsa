@@ -18,6 +18,6 @@ class ManageTasks:
 
     def execute_tasks(self):
         executed_tasks = self.priority_queue.dequeue_all()
-        for task in executed_tasks:
+        for tasks in executed_tasks:
             self.memory_manager.deallocate(10)
         return executed_tasks

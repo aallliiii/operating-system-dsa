@@ -57,23 +57,23 @@ class DataStructureApp(QMainWindow):
         # Memory Manager Section
         self.memory_output = QTextEdit()
         self.memory_output.setReadOnly(True)
-        self.memory_input = QLineEdit()
-        self.add_memory_btn = QPushButton("Add Memory Block")
-        self.allocate_memory_btn = QPushButton("Allocate Memory")
-        self.deallocate_memory_btn = QPushButton("Deallocate Memory")
+        # self.memory_input = QLineEdit()
+        # self.add_memory_btn = QPushButton("Add Memory Block")
+        # self.allocate_memory_btn = QPushButton("Allocate Memory")
+        # self.deallocate_memory_btn = QPushButton("Deallocate Memory")
 
         main_layout.addWidget(QLabel("Memory Manager"))
         main_layout.addWidget(self.memory_output)
         memory_layout = QFormLayout()
-        memory_layout.addRow("Memory Size (MB):", self.memory_input)
+        # memory_layout.addRow("Memory Size (MB):", self.memory_input)
         main_layout.addLayout(memory_layout)
-        main_layout.addWidget(self.add_memory_btn)
-        main_layout.addWidget(self.allocate_memory_btn)
-        main_layout.addWidget(self.deallocate_memory_btn)
+        # main_layout.addWidget(self.add_memory_btn)
+        # main_layout.addWidget(self.allocate_memory_btn)
+        # main_layout.addWidget(self.deallocate_memory_btn)
 
-        self.add_memory_btn.clicked.connect(self.add_memory_block)
-        self.allocate_memory_btn.clicked.connect(self.allocate_memory)
-        self.deallocate_memory_btn.clicked.connect(self.deallocate_memory)
+        # self.add_memory_btn.clicked.connect(self.add_memory_block)
+        # self.allocate_memory_btn.clicked.connect(self.allocate_memory)
+        # self.deallocate_memory_btn.clicked.connect(self.deallocate_memory)
         
 
         # File System Section
