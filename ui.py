@@ -1,99 +1,131 @@
 import sys
-from DataStructures.priority_Queue import PriorityQueue
-from DataStructures.linked_list import LinkedListMemoryManager
-from DataStructures.Graph import Graph
+from manageTasks import ManageTasks
 from DataStructures.BST import BinarySearchTree
+from DataStructures.Graph import Graph
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget, QLabel,
-    QPushButton, QLineEdit, QListWidget, QTextEdit, QFormLayout
+    QPushButton, QLineEdit, QListWidget, QTextEdit, QFormLayout, QComboBox
 )
+from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
+
 class DataStructureApp(QMainWindow):
     def __init__(self):
         super().__init__()
         self.init_ui()
 
         # Data structures
-        self.task_scheduler = PriorityQueue()
-        self.memory_manager = LinkedListMemoryManager()
+        self.task_manager = ManageTasks()
         self.file_system = BinarySearchTree()
         self.network_graph = Graph()
 
     def init_ui(self):
-        self.setWindowTitle("Data Structures UI")
-        self.setGeometry(100, 100, 800, 600)
+        self.setWindowTitle("Data Structures Dashboard")
+        self.setGeometry(0, 0, 1200, 800)  # Adjusted size for fullscreen
+        self.showMaximized()  # Open in fullscreen
+
+        # Styling
+        self.setStyleSheet("""
+            QMainWindow {
+                background-color: #2b2b2b; /* Dark grey background */
+                color: #a4c639; /* Light green text */
+            }
+            QLabel {
+                font-size: 18px;
+                color: #a4c639;
+            }
+            QPushButton {
+                background-color: #a4c639;
+                color: #2b2b2b;
+                font-size: 16px;
+                padding: 8px 16px;
+                border-radius: 5px;
+            }
+            QPushButton:hover {
+                background-color: #8bb630;
+            }
+            QLineEdit, QTextEdit, QListWidget, QComboBox {
+                background-color: #3b3b3b;
+                color: #a4c639;
+                border: 1px solid #a4c639;
+                border-radius: 5px;
+            }
+        """)
 
         # Layout
         central_widget = QWidget()
         main_layout = QVBoxLayout()
 
-        # Add a task scheduler section
+        # Add sections
+        main_layout.addWidget(self.create_task_scheduler_section())
+        main_layout.addWidget(self.create_file_system_section())
+        main_layout.addWidget(self.create_graph_section())
+
+        central_widget.setLayout(main_layout)
+        self.setCentralWidget(central_widget)
+
+    def create_task_scheduler_section(self):
+        section = QWidget()
+        layout = QVBoxLayout()
+
+        layout.addWidget(QLabel("Task Scheduler"))
+
+        # Dropdown for task types
+        self.task_dropdown = QComboBox()
+        self.task_dropdown.addItems(["Select Task", "Send Email", "Upload File", "Run Backup", "Generate Report", "System Maintenance"])
+        self.task_dropdown.currentIndexChanged.connect(self.dropdown_changed)
+
         self.task_list = QListWidget()
-        self.task_input = QLineEdit()
-        self.task_priority = QLineEdit()
         self.add_task_btn = QPushButton("Add Task")
         self.execute_task_btn = QPushButton("Execute Task")
 
-        main_layout.addWidget(QLabel("Task Scheduler"))
-        main_layout.addWidget(self.task_list)
-        task_layout = QFormLayout()
-        main_layout.addLayout(task_layout)
+        task_form = QFormLayout()
+        task_form.addRow("Task Type:", self.task_dropdown)
 
-         # Task Scheduler Section
-        main_layout.addWidget(QLabel("Task Scheduler"))
-        main_layout.addWidget(self.task_list)
-        task_layout = QFormLayout()
-        task_layout.addRow("Task:", self.task_input)
-        task_layout.addRow("Priority:", self.task_priority)
-        main_layout.addLayout(task_layout)
-        main_layout.addWidget(self.add_task_btn)
-        main_layout.addWidget(self.execute_task_btn)
+        layout.addLayout(task_form)
+        layout.addWidget(self.task_list)
+        layout.addWidget(self.add_task_btn)
+        layout.addWidget(self.execute_task_btn)
 
         self.add_task_btn.clicked.connect(self.add_task)
         self.execute_task_btn.clicked.connect(self.execute_task)
 
-        # Memory Manager Section
-        self.memory_output = QTextEdit()
-        self.memory_output.setReadOnly(True)
-        self.memory_input = QLineEdit()
-        self.add_memory_btn = QPushButton("Add Memory Block")
-        self.allocate_memory_btn = QPushButton("Allocate Memory")
-        self.deallocate_memory_btn = QPushButton("Deallocate Memory")
+        section.setLayout(layout)
+        return section
 
-        main_layout.addWidget(QLabel("Memory Manager"))
-        main_layout.addWidget(self.memory_output)
-        memory_layout = QFormLayout()
-        memory_layout.addRow("Memory Size (MB):", self.memory_input)
-        main_layout.addLayout(memory_layout)
-        main_layout.addWidget(self.add_memory_btn)
-        main_layout.addWidget(self.allocate_memory_btn)
-        main_layout.addWidget(self.deallocate_memory_btn)
+    def create_file_system_section(self):
+        section = QWidget()
+        layout = QVBoxLayout()
 
-        self.add_memory_btn.clicked.connect(self.add_memory_block)
-        self.allocate_memory_btn.clicked.connect(self.allocate_memory)
-        self.deallocate_memory_btn.clicked.connect(self.deallocate_memory)
-
-        # File System Section
+        layout.addWidget(QLabel("File System"))
         self.file_output = QTextEdit()
         self.file_output.setReadOnly(True)
         self.file_input = QLineEdit()
         self.add_file_btn = QPushButton("Add File")
         self.view_files_btn = QPushButton("View All Files")
 
-        main_layout.addWidget(QLabel("File System"))
-        main_layout.addWidget(self.file_output)
-        file_layout = QFormLayout()
-        file_layout.addRow("File Name:", self.file_input)
-        main_layout.addLayout(file_layout)
-        main_layout.addWidget(self.add_file_btn)
-        main_layout.addWidget(self.view_files_btn)
+        file_form = QFormLayout()
+        file_form.addRow("File Name:", self.file_input)
+
+        layout.addLayout(file_form)
+        layout.addWidget(self.file_output)
+        layout.addWidget(self.add_file_btn)
+        layout.addWidget(self.view_files_btn)
 
         self.add_file_btn.clicked.connect(self.add_file)
         self.view_files_btn.clicked.connect(self.view_files)
 
-        # Graph (Networking) Section
+        section.setLayout(layout)
+        return section
+
+    def create_graph_section(self):
+        section = QWidget()
+        layout = QVBoxLayout()
+
+        layout.addWidget(QLabel("Networking (Graph)"))
         self.graph_output = QTextEdit()
         self.graph_output.setReadOnly(True)
+
         self.node_input = QLineEdit()
         self.edge_from_input = QLineEdit()
         self.edge_to_input = QLineEdit()
@@ -104,73 +136,57 @@ class DataStructureApp(QMainWindow):
         self.add_edge_btn = QPushButton("Add Edge")
         self.shortest_path_btn = QPushButton("Find Shortest Path")
 
-        main_layout.addWidget(QLabel("Networking (Graph)"))
-        main_layout.addWidget(self.graph_output)
-        graph_layout = QFormLayout()
-        graph_layout.addRow("Node:", self.node_input)
-        graph_layout.addRow("From Node:", self.edge_from_input)
-        graph_layout.addRow("To Node:", self.edge_to_input)
-        graph_layout.addRow("Weight:", self.edge_weight_input)
-        graph_layout.addRow("Start Node:", self.start_node_input)
-        graph_layout.addRow("End Node:", self.end_node_input)
-        main_layout.addLayout(graph_layout)
-        main_layout.addWidget(self.add_node_btn)
-        main_layout.addWidget(self.add_edge_btn)
-        main_layout.addWidget(self.shortest_path_btn)
+        graph_form = QFormLayout()
+        graph_form.addRow("Node:", self.node_input)
+        graph_form.addRow("From Node:", self.edge_from_input)
+        graph_form.addRow("To Node:", self.edge_to_input)
+        graph_form.addRow("Weight:", self.edge_weight_input)
+        graph_form.addRow("Start Node:", self.start_node_input)
+        graph_form.addRow("End Node:", self.end_node_input)
+
+        layout.addLayout(graph_form)
+        layout.addWidget(self.graph_output)
+        layout.addWidget(self.add_node_btn)
+        layout.addWidget(self.add_edge_btn)
+        layout.addWidget(self.shortest_path_btn)
 
         self.add_node_btn.clicked.connect(self.add_node)
         self.add_edge_btn.clicked.connect(self.add_edge)
         self.shortest_path_btn.clicked.connect(self.find_shortest_path)
 
-        central_widget.setLayout(main_layout)
-        self.setCentralWidget(central_widget)
+        section.setLayout(layout)
+        return section
 
     # Task Scheduler Functions
+    def dropdown_changed(self):
+        selected_task = self.task_dropdown.currentText()
+        print(f"Selected Task: {selected_task}")  # Debugging line (optional)
+
     def add_task(self):
-        task = self.task_input.text()
-        try:
-            priority = int(self.task_priority.text())
-            self.task_scheduler.enqueue(priority, task)
+        task = self.task_dropdown.currentText()
+        priorities = {
+            "Send Email": 1,
+            "Upload File": 2,
+            "Run Backup": 3,
+            "Generate Report": 4,
+            "System Maintenance": 5
+        }
+        if task == "Select Task":
+            self.task_list.addItem("Please select a valid task.")
+        else:
+            priority = priorities.get(task, 99)  # Default priority 99 if not listed
+            self.task_manager.addTasksToQueue(task, priority)
             self.task_list.addItem(f"{task} (Priority: {priority})")
-            self.task_input.clear()
-            self.task_priority.clear()
-        except ValueError:
-            self.task_list.addItem("Invalid priority value.")
+            self.task_dropdown.setCurrentIndex(0)  # Reset dropdown
 
     def execute_task(self):
-        task, priority = self.task_scheduler.dequeue()
-        if task:
-            self.task_list.addItem(f"Executed: {task} (Priority: {priority})")
+        executed_tasks = self.task_manager.execute_tasks()
+        if executed_tasks:
+            for task, priority in executed_tasks:
+                self.task_list.addItem(f"Executed: {task} (Priority: {priority})")
+            self.task_list.addItem("All tasks executed.")
         else:
             self.task_list.addItem("No tasks to execute.")
-
-    # Memory Manager Functions
-    def add_memory_block(self):
-        try:
-            size = int(self.memory_input.text())
-            self.memory_manager.add_block(size)
-            self.update_memory_output()
-            self.memory_input.clear()
-        except ValueError:
-            self.memory_output.append("Invalid memory size.")
-
-    def allocate_memory(self):
-        try:
-            size = int(self.memory_input.text())
-            result = self.memory_manager.allocate(size)
-            self.memory_output.append(result)
-            self.update_memory_output()
-            self.memory_input.clear()
-        except ValueError:
-            self.memory_output.append("Invalid memory size.")
-
-    def deallocate_memory(self):
-        result = self.memory_manager.deallocate()
-        self.memory_output.append(result)
-        self.update_memory_output()
-
-    def update_memory_output(self):
-        self.memory_output.setText(self.memory_manager.display_memory())
 
     # File System Functions
     def add_file(self):
@@ -218,6 +234,7 @@ def main():
     window = DataStructureApp()
     window.show()
     sys.exit(app.exec_())
+
 
 if __name__ == "__main__":
     main()

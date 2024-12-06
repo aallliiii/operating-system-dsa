@@ -1,8 +1,8 @@
 class Node:
-    def __init__(self,size,allocated=False):
+    def __init__(self,size,allocated=False, nextAddress = None):
         self.size = size
         self.allocated = allocated
-        self.next=None
+        self.next=nextAddress
 
 class LinkedListMemoryManager:
     def __init__(self):
@@ -24,8 +24,16 @@ class LinkedListMemoryManager:
         current = self.head
         while current:
             if not current.allocated and current.size>= size:
+                allocated_block = size
+                remaining_size = current.size - allocated_block
+
+
                 current.allocated = True
-                current.size-=size
+                current.size = allocated_block
+
+                if remaining_size > 0:
+                    new_block_of_memory = Node(remaining_size,False,current.next)
+                    current.next = new_block_of_memory
                 return f"Allocated {size}MB."
             current = current.next
         return "No free block of that size available"
@@ -34,9 +42,22 @@ class LinkedListMemoryManager:
     def deallocate(self, size):
         current = self.head
         while current:
-            if current.allocated :
-                current.size+=size
+            if current.allocated and current.size == size:
+                
                 current.allocated = False
+
+                if current.next and not current.next.allocated:
+                    current.size += current.next.size
+                    current.next = current.next.next
+
+                if self.head != current:
+                    previous = self.head
+                    while previous.next != current:
+                        previous = previous.next
+                    if not previous.allocated:
+                        previous.size += current.size
+                        previous.next = current.next
+
                 return f"Deallocated {size}MB."
             current = current.next
         return "No block to deallocate"
@@ -46,7 +67,7 @@ class LinkedListMemoryManager:
         result=[]
         current = self.head
         while current:
-            state="Free" if current.allocated else "Free"
+            state="Allocated" if current.allocated else "Free"
             result.append(f"[{current.size}MB - {state}]")
             current = current.next
         return " -> ".join(result)

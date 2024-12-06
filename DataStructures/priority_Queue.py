@@ -6,8 +6,8 @@ class PriorityQueue:
     
     # Enqueue Function:
     def enqueue(self, item, priority):
-        if  isinstance(priority,int):
-           heapq.heappush(self._queue, (-priority, item))
+        if isinstance(priority,int):
+            heapq.heappush(self._queue, (-priority, item))
 
     # Dequeue function:
     def dequeue(self):
@@ -27,6 +27,13 @@ class PriorityQueue:
     #Check Empty Queue:
     def is_empty(self):
         return len(self._queue) == 0
+    
+    def dequeue_all(self):
+        tasks = []
+        while not self.is_empty():
+            task, priority = self.dequeue()
+            tasks.append((task, priority))
+        return tasks
         
 
 # P_Q=PriorityQueue()
