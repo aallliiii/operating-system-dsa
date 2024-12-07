@@ -1,6 +1,8 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QTextBrowser, QMessageBox
-from OS_System import OS_System  # Import OS_System only
+from PyQt5.QtWidgets import (
+    QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QTextBrowser, QMessageBox, QComboBox, QProgressBar
+)
+from OS_System import OS_System  # Import the backend system
 
 class OS_UI(QWidget):
     def __init__(self):
@@ -11,30 +13,35 @@ class OS_UI(QWidget):
 
     def init_ui(self):
         self.setWindowTitle("Operating System Flow")
-        self.setGeometry(100, 100, 600, 600)
+        self.setGeometry(100, 100, 600, 700)
 
-        # Layout for UI components
+        # Main Layout
         self.layout = QVBoxLayout()
 
-        # Task Scheduling Section
+        # Task Input Section
         self.task_label = QLabel("Task Name:")
         self.layout.addWidget(self.task_label)
         self.task_input = QLineEdit()
         self.layout.addWidget(self.task_input)
 
-        self.priority_label = QLabel("Task Priority (1-10):")
-        self.layout.addWidget(self.priority_label)
-        self.priority_input = QLineEdit()
-        self.layout.addWidget(self.priority_input)
+        self.task_type_label = QLabel("Select Task Type:")
+        self.layout.addWidget(self.task_type_label)
+
+        self.task_dropdown = QComboBox()  # Dropdown for task type
+        self.task_dropdown.addItems(["File", "Folder", "Music", "Video"])  # Predefined task types
+        self.layout.addWidget(self.task_dropdown)
 
         self.schedule_button = QPushButton("Schedule Task")
         self.schedule_button.clicked.connect(self.schedule_task)
         self.layout.addWidget(self.schedule_button)
 
-        # Memory Allocation Section
-        self.allocate_button = QPushButton("Allocate Memory for Task")
-        self.allocate_button.clicked.connect(self.allocate_memory)
-        self.layout.addWidget(self.allocate_button)
+        # Memory Usage Progress Bar
+        self.memory_label = QLabel("Memory Usage:")
+        self.layout.addWidget(self.memory_label)
+        self.memory_progress = QProgressBar()
+        self.memory_progress.setMaximum(500)  # Initial memory 500MB
+        self.memory_progress.setValue(0)  # Start with 0 usage
+        self.layout.addWidget(self.memory_progress)
 
         # Execute Task Section
         self.execute_button = QPushButton("Execute Task")
@@ -56,34 +63,27 @@ class OS_UI(QWidget):
 
     def schedule_task(self):
         task_name = self.task_input.text()
-        priority = self.priority_input.text()
+        task_type = self.task_dropdown.currentText()
 
-        if not task_name or not priority:
-            QMessageBox.warning(self, "Input Error", "Please enter both task name and priority.")
-            return
-
-        try:
-            priority = int(priority)
-            if priority < 1 or priority > 10:
-                raise ValueError
-        except ValueError:
-            QMessageBox.warning(self, "Input Error", "Priority must be an integer between 1 and 10.")
-            return
-
-        self.system.schedule_task(priority, task_name)
-        self.task_input.clear()
-        self.priority_input.clear()
-
-        # Update memory, task queue, and file system display
-        self.update_display()
-
-    def allocate_memory(self):
-        task_name = self.task_input.text()
         if not task_name:
-            QMessageBox.warning(self, "Input Error", "Please enter a task name to allocate memory.")
+            QMessageBox.warning(self, "Input Error", "Please enter a task name.")
             return
 
-        self.system.allocate_memory(task_name)
+        # Task properties
+        task_properties = {
+            "File": (10, 1),
+            "Folder": (20, 2),
+            "Music": (5, 3),
+            "Video": (30, 4),
+        }
+
+        memory_required, priority = task_properties[task_type]
+
+        # Call backend to schedule task
+        self.system.schedule_task(task_name, priority, memory_required)
+        self.task_input.clear()
+
+        # Update displays
         self.update_display()
 
     def execute_task(self):
@@ -91,6 +91,10 @@ class OS_UI(QWidget):
         self.update_display()
 
     def update_display(self):
+        # Update memory usage progress bar
+        used_memory = self.system.get_used_memory()
+        self.memory_progress.setValue(used_memory)
+
         # Update memory display
         self.memory_display.setText(self.system.memory_manager.display_memory())
 
@@ -99,6 +103,7 @@ class OS_UI(QWidget):
 
         # Update task log
         self.task_log_display.setText("\n".join(self.system.task_log))
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

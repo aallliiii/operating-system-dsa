@@ -18,11 +18,29 @@ class OS_System:
         print("Memory initialized:")
         print(self.memory_manager.display_memory())
 
-    def schedule_task(self, task_name, priority):
-        # Schedule task using priority queue
+    #def schedule_task(self, task_name, priority):
+    #    # Schedule task using priority queue
+    #    self.task_scheduler.enqueue(task_name, priority)
+    #    print(f"\nTask '{task_name}' with priority {priority} scheduled.")
+    #    self.display_task_queue()
+
+    def schedule_task(self, task_name, priority, memory_required):
+        # Schedule task with given priority
         self.task_scheduler.enqueue(task_name, priority)
-        print(f"\nTask '{task_name}' with priority {priority} scheduled.")
-        self.display_task_queue()
+        print(f"Task '{task_name}' scheduled with priority {priority} and memory requirement {memory_required}MB.")
+        self.memory_manager.add_block(memory_required)  # Add memory block for the task
+
+    def get_used_memory(self):
+    # Traverse the linked list to calculate used memory
+        current = self.memory_manager.head
+        used_memory = 0
+        while current:
+            if current.allocated:
+                used_memory += current.size
+            current = current.next
+        return used_memory
+
+
 
     def allocate_memory(self, task_name):
         # Allocate memory for task from available memory blocks

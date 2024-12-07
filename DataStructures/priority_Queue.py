@@ -5,8 +5,9 @@ class PriorityQueue:
         self._queue = []
     
     # Enqueue Function:
-    def enqueue(self, priority, item):
-        heapq.heappush(self._queue, (-priority, item))
+    def enqueue(self, item, priority):
+        if isinstance(priority,int):
+            heapq.heappush(self._queue, (-priority, item))
 
     # Dequeue function:
     def dequeue(self):
