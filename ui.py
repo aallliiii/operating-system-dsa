@@ -14,7 +14,7 @@ class DataStructureApp(QMainWindow):
         self.init_ui()
 
     def init_ui(self):
-        self.setWindowTitle("Task Manager with Memory")
+        self.setWindowTitle("Operating System (OS)")
 
         # Full Screen Size:
         self.setGeometry(0, 0, 1200, 800)  
@@ -103,9 +103,9 @@ class DataStructureApp(QMainWindow):
         self.task_viewer = QListWidget()
 
         layout.addLayout(task_form)
-        layout.addWidget(QLabel("Tasks Viewer"))
+        layout.addWidget(QLabel("Execution Tracker"))
         layout.addWidget(self.task_viewer)
-        layout.addWidget(QLabel("Task Queue"))
+        layout.addWidget(QLabel("Task Scheduler"))
         layout.addWidget(self.task_list)
         layout.addWidget(self.add_task_btn)
         layout.addWidget(self.execute_task_btn)
