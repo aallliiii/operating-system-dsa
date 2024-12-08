@@ -6,14 +6,14 @@ class ManageTasks:
         self.tasks = {}
         self.priority_queue = PriorityQueue()
         self.memory_manager = LinkedListMemoryManager()
-        self.memory_manager.add_block(5000)
+        self.memory_manager.initialize_Memory(500,100)
         
 
     def addTasksToQueue(self, item, priority):
         self.priority_queue.enqueue(priority, item)
         self.memory_manager.allocate(10)
     
-    def display_memory(self):
+    def Display_memory(self):
         return self.memory_manager.display_memory()
 
     def execute_tasks(self):
