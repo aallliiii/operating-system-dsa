@@ -150,7 +150,7 @@ class OperatingSystemUI(QMainWindow):
 
         if task_name and category != "Select Category":
             try:
-                # Use the selected category priority
+               
                 name_and_category = {
                     "task_name": task_name,
                     "category": category
@@ -170,8 +170,10 @@ class OperatingSystemUI(QMainWindow):
         else:
             self.task_list.addItem("Invalid task name or category.")
 
-        # Clear the input fields after adding
+        
         self.task_name_input.clear()
+        self.file_name_input.clear()
+        self.file_path_input.clear()
         self.task_category_dropdown.setCurrentIndex(0)
 
     def execute_tasks(self):
