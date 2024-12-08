@@ -1,112 +1,82 @@
+
 import sys
-from manageTasks import ManageTasks
+from manageTasks import ManageTasks  # Assuming ManageTasks has task & memory logic
 from PyQt5.QtWidgets import (
-    QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget, QLabel,
-    QPushButton, QLineEdit, QListWidget, QFormLayout, QComboBox, QTextEdit, QFrame
+    QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel,
+    QPushButton, QListWidget, QComboBox, QLineEdit, QTextEdit, QFormLayout, QProgressBar, QFrame, QTabWidget
 )
-from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtCore import QTimer
 
 
-class DataStructureApp(QMainWindow):
+class OperatingSystemUI(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.task_manager = ManageTasks()
+        self.task_manager = ManageTasks()  # Task and Memory logic
         self.init_ui()
 
     def init_ui(self):
-        self.setWindowTitle("Operating System (OS)")
+        self.setWindowTitle("Operating System Demo")
+        self.setGeometry(100, 100, 1200, 800)
 
-        # Full Screen Size:
-        self.setGeometry(0, 0, 1200, 800)  
-        self.showMaximized()
-
-        # Styling applying Here:
+        # Styling
         self.setStyleSheet("""
-            QMainWindow {
-                background-color: #2b2b2b; /* Dark grey background */
-                color: #a4c639; /* Light green text */
-            }
-            QLabel {
-                font-size: 20px;
-                color: #a4c639;
-                padding: 10px 0;
-            }
-            QPushButton {
-                background-color: #a4c639;
-                color: #2b2b2b;
-                font-size: 16px;
-                padding: 8px 16px;
-                border-radius: 5px;
-            }
-            QPushButton:hover {
-                background-color: #8bb630;
-            }
-            QLineEdit, QComboBox, QListWidget, QTextEdit {
-                background-color: #3b3b3b;
-                color: #a4c639;
-                border: 1px solid #a4c639;
-                border-radius: 5px;
-            }
-            QFrame {
-                background-color: #555555;
-                height: 2px;
-            }
+            QMainWindow { background-color: #2b2b2b; color: #a4c639; }
+            QLabel { font-size: 18px; color: #a4c639; }
+            QPushButton { background-color: #a4c639; color: #2b2b2b; padding: 10px; border-radius: 5px; }
+            QPushButton:hover { background-color: #8bb630; }
+            QListWidget, QComboBox, QTextEdit, QLineEdit { background-color: #3b3b3b; color: #a4c639; border: 1px solid #a4c639; }
+            QFrame { background-color: #555555; height: 2px; }
         """)
 
-        # Central Layout
+        # Central Widget and Tabs
         central_widget = QWidget()
-        main_layout = QVBoxLayout()
+        layout = QVBoxLayout()
+        self.tabs = QTabWidget()
 
-        # Add Task Manager and Memory Manager Sections
-        main_layout.addWidget(self.create_task_manager_section())
-        main_layout.addWidget(self.create_divider())
-        main_layout.addWidget(self.create_memory_manager_section())
+        # Add Tabs
+        self.tabs.addTab(self.create_task_manager_tab(), "Task Management")
+        self.tabs.addTab(self.create_memory_manager_tab(), "Memory Management")
 
-        central_widget.setLayout(main_layout)
+        layout.addWidget(self.tabs)
+        central_widget.setLayout(layout)
         self.setCentralWidget(central_widget)
 
-    def create_divider(self):
-
-        # Creates a divider for visual separation:
-        divider = QFrame()
-        divider.setFrameShape(QFrame.HLine)
-        divider.setFrameShadow(QFrame.Sunken)
-        divider.setStyleSheet("background-color: #73e617;")
-        return divider
-
-    def create_task_manager_section(self):
-
-        # Creates the Task Manager section:
-        section = QWidget()
+    def create_task_manager_tab(self):
+        # Creates the Task Management Tab
+        tab = QWidget()
         layout = QVBoxLayout()
 
-        # Task Input and Category
+        # Task Manager Section
         layout.addWidget(QLabel("Task Manager"))
 
+        task_form = QFormLayout()
+
+        # Task Name input field
         self.task_name_input = QLineEdit()
         self.task_name_input.setPlaceholderText("Enter Task Name")
 
-        self.task_category_dropdown = QComboBox()
-        self.task_category_dropdown.addItems([
-            "Select Category", "Email", "File Upload", "Backup", "Generate Report", "System Maintenance"
-        ])
+        task_form.addRow("Task Name:", self.task_name_input)
 
+        # Task Category dropdown
+        self.task_category_dropdown = QComboBox()
+        self.task_category_dropdown.addItems(["Select Category", "Email", "File Upload", "Backup", "Generate Report", "System Maintenance"])
+
+        task_form.addRow("Select Task Category:", self.task_category_dropdown)
+        layout.addLayout(task_form)
+
+        # Task List and Viewer
+        self.task_list = QListWidget()
+        layout.addWidget(QLabel("Scheduled Tasks:"))
+        layout.addWidget(self.task_list)
+
+        self.task_viewer = QListWidget()
+        layout.addWidget(QLabel("Execution Tracker:"))
+        layout.addWidget(self.task_viewer)
+
+        # Buttons
         self.add_task_btn = QPushButton("Add Task")
         self.execute_task_btn = QPushButton("Execute Tasks")
 
-        task_form = QFormLayout()
-        task_form.addRow("Task Name:", self.task_name_input)
-        task_form.addRow("Task Category:", self.task_category_dropdown)
-
-        # Task Viewer
-        self.task_list = QListWidget()
-        self.task_viewer = QListWidget()
-
-        layout.addLayout(task_form)
-        layout.addWidget(QLabel("Execution Tracker"))
-        layout.addWidget(self.task_viewer)
-        layout.addWidget(QLabel("Task Scheduler"))
-        layout.addWidget(self.task_list)
         layout.addWidget(self.add_task_btn)
         layout.addWidget(self.execute_task_btn)
 
@@ -114,30 +84,50 @@ class DataStructureApp(QMainWindow):
         self.add_task_btn.clicked.connect(self.add_task)
         self.execute_task_btn.clicked.connect(self.execute_tasks)
 
-        section.setLayout(layout)
-        return section
+        tab.setLayout(layout)
+        return tab
 
-    def create_memory_manager_section(self):
-        # Creates the Memory Manager section:
-        section = QWidget()
+    def create_memory_manager_tab(self):
+        # Creates the Memory Management Tab
+        tab = QWidget()
         layout = QVBoxLayout()
 
+        # Memory Manager Section
         layout.addWidget(QLabel("Memory Manager"))
-        self.memory_output = QTextEdit()
-        self.memory_output.setReadOnly(True)
-        self.update_memory_output()
+        self.memory_progress = QProgressBar()
+        self.memory_progress.setMaximum(500)  # Assuming 500MB total memory
+        self.memory_progress.setValue(500)  # Start with full memory available
+        layout.addWidget(self.memory_progress)
 
-        layout.addWidget(self.memory_output)
-        section.setLayout(layout)
-        return section
+        self.memory_status = QTextEdit()
+        self.memory_status.setReadOnly(True)
+        self.update_memory_status()
+        layout.addWidget(self.memory_status)
 
-    def update_memory_output(self):
-        # Update memory display using ManageTasks logic:
-        memory_state = self.task_manager.Display_memory()
-        self.memory_output.setText(f"Memory Blocks:\n{memory_state}")
+        tab.setLayout(layout)
+        return tab
+
+    def update_memory_status(self):
+
+        # Updates the memory display and progress bar
+        current = self.task_manager.memory_manager.head 
+        used_memory = 0
+        while current:
+            if current.allocated:
+                used_memory += current.size 
+            current = current.next 
+        
+        total_memory = 500  
+        free_memory = total_memory - used_memory  
+        self.memory_progress.setValue(free_memory)  
+
+        # Update the memory block statuses
+        memory_blocks = self.task_manager.memory_manager.display_memory()  
+        self.memory_status.setText(f"Memory Blocks:\n{memory_blocks}")
 
     def add_task(self):
-        # Adds a task to the task queue:
+
+        # Adds a task to the task queue and allocates memory:
         task_name = self.task_name_input.text()
         category = self.task_category_dropdown.currentText()
 
@@ -149,20 +139,21 @@ class DataStructureApp(QMainWindow):
             "System Maintenance": 5
         }
 
-        if not task_name or category == "Select Category":
-            self.task_list.addItem("Invalid task name or category.")
-        else:
-            priority = int(priorities.get(category, 99))
+        if task_name and category != "Select Category":
             try:
-                # print(task_name,priority)
+                # Use the selected category priority
+                priority = int(priorities.get(category, 99))
                 self.task_manager.addTasksToQueue(task_name, priority)
-                self.task_list.addItem(f"{task_name} ({category}, Priority: {priority})")
-                self.update_memory_output()
+                self.task_list.addItem(f"Scheduled: {task_name} (Priority: {priority})")
+                self.update_memory_status()
             except MemoryError as e:
-                self.task_list.addItem(str(e))
+                self.task_list.addItem(f"Error: {str(e)}")
+        else:
+            self.task_list.addItem("Invalid task name or category.")
 
-            self.task_name_input.clear()
-            self.task_category_dropdown.setCurrentIndex(0)
+        # Clear the input fields after adding
+        self.task_name_input.clear()
+        self.task_category_dropdown.setCurrentIndex(0)
 
     def execute_tasks(self):
 
@@ -171,28 +162,27 @@ class DataStructureApp(QMainWindow):
         if not executed_tasks:
             self.task_viewer.addItem("No tasks to execute.")
             return
-        
-        # Execute the Tasks with 5 seconds delay:
+
         self.execute_task_with_delay(executed_tasks)
 
     def execute_task_with_delay(self, tasks):
-        # Executes tasks with a 5-second delay:
+
+        # Executes tasks one by one with a 5-second delay:
         if tasks:
             task, priority = tasks.pop(0)
             self.task_viewer.addItem(f"Executing: {task} (Priority: {priority})")
-            self.update_memory_output()
+            self.update_memory_status()
 
             # Delay for 5 seconds before executing the next task
-            QTimer.singleShot(5000, lambda: self.execute_task_with_delay(tasks))  
+            QTimer.singleShot(5000, lambda: self.execute_task_with_delay(tasks))
         else:
-            self.task_viewer.addItem("All tasks executed. Memory updated.")
-            self.update_memory_output()
-
+            self.task_viewer.addItem("All tasks executed. Memory reset.")
+            self.update_memory_status()
 
 
 def main():
     app = QApplication(sys.argv)
-    window = DataStructureApp()
+    window = OperatingSystemUI()
     window.show()
     sys.exit(app.exec_())
 

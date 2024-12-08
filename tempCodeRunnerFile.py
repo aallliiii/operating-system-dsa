@@ -1,1 +1,1 @@
-divider.setFrameShape(QFrame.HLine)
+ # tabs.addTab(self.create_file_system_section(), "File System")
