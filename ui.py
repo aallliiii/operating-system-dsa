@@ -18,6 +18,7 @@ class OperatingSystemUI(QMainWindow):
     def init_ui(self):
         self.setWindowTitle("Operating System (OS)")
         self.setGeometry(100, 100, 1200, 800)
+      
 
         # Styling
         self.setStyleSheet("""
