@@ -1,0 +1,1 @@
+divider.setFrameShape(QFrame.HLine)

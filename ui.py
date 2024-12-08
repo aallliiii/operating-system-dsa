@@ -4,24 +4,23 @@ from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget, QLabel,
     QPushButton, QLineEdit, QListWidget, QFormLayout, QComboBox, QTextEdit, QFrame
 )
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QTimer, Qt
 
 
 class DataStructureApp(QMainWindow):
     def __init__(self):
         super().__init__()
-        
-
-        # Data structure: Task Manager
         self.task_manager = ManageTasks()
         self.init_ui()
 
     def init_ui(self):
         self.setWindowTitle("Task Manager with Memory")
-        self.setGeometry(0, 0, 1200, 800)  # Fullscreen size
+
+        # Full Screen Size:
+        self.setGeometry(0, 0, 1200, 800)  
         self.showMaximized()
 
-        # Styling
+        # Styling applying Here:
         self.setStyleSheet("""
             QMainWindow {
                 background-color: #2b2b2b; /* Dark grey background */
@@ -67,14 +66,17 @@ class DataStructureApp(QMainWindow):
         self.setCentralWidget(central_widget)
 
     def create_divider(self):
-        """Creates a divider for visual separation."""
+
+        # Creates a divider for visual separation:
         divider = QFrame()
         divider.setFrameShape(QFrame.HLine)
         divider.setFrameShadow(QFrame.Sunken)
+        divider.setStyleSheet("background-color: #73e617;")
         return divider
 
     def create_task_manager_section(self):
-        """Creates the Task Manager section."""
+
+        # Creates the Task Manager section:
         section = QWidget()
         layout = QVBoxLayout()
 
@@ -116,7 +118,7 @@ class DataStructureApp(QMainWindow):
         return section
 
     def create_memory_manager_section(self):
-        """Creates the Memory Manager section."""
+        # Creates the Memory Manager section:
         section = QWidget()
         layout = QVBoxLayout()
 
@@ -130,12 +132,12 @@ class DataStructureApp(QMainWindow):
         return section
 
     def update_memory_output(self):
-        """Update memory display using ManageTasks logic."""
+        # Update memory display using ManageTasks logic:
         memory_state = self.task_manager.Display_memory()
         self.memory_output.setText(f"Memory Blocks:\n{memory_state}")
 
     def add_task(self):
-        """Adds a task to the task queue."""
+        # Adds a task to the task queue:
         task_name = self.task_name_input.text()
         category = self.task_category_dropdown.currentText()
 
@@ -150,8 +152,9 @@ class DataStructureApp(QMainWindow):
         if not task_name or category == "Select Category":
             self.task_list.addItem("Invalid task name or category.")
         else:
-            priority = priorities.get(category, 99)
+            priority = int(priorities.get(category, 99))
             try:
+                # print(task_name,priority)
                 self.task_manager.addTasksToQueue(task_name, priority)
                 self.task_list.addItem(f"{task_name} ({category}, Priority: {priority})")
                 self.update_memory_output()
@@ -162,17 +165,29 @@ class DataStructureApp(QMainWindow):
             self.task_category_dropdown.setCurrentIndex(0)
 
     def execute_tasks(self):
-        """Executes tasks and updates the memory manager display."""
+
+        # Executes tasks with a 5-second delay:
         executed_tasks = self.task_manager.execute_tasks()
         if not executed_tasks:
             self.task_viewer.addItem("No tasks to execute.")
             return
+        
+        # Execute the Tasks with 5 seconds delay:
+        self.execute_task_with_delay(executed_tasks)
 
-        for task, priority in executed_tasks:
-            self.task_viewer.addItem(f"Executed: {task} (Priority: {priority})")
+    def execute_task_with_delay(self, tasks):
+        # Executes tasks with a 5-second delay:
+        if tasks:
+            task, priority = tasks.pop(0)
+            self.task_viewer.addItem(f"Executing: {task} (Priority: {priority})")
             self.update_memory_output()
 
-        self.task_viewer.addItem("All tasks executed. Memory updated.")
+            # Delay for 5 seconds before executing the next task
+            QTimer.singleShot(5000, lambda: self.execute_task_with_delay(tasks))  
+        else:
+            self.task_viewer.addItem("All tasks executed. Memory updated.")
+            self.update_memory_output()
+
 
 
 def main():

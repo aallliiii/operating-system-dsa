@@ -10,7 +10,9 @@ class ManageTasks:
         
 
     def addTasksToQueue(self, item, priority):
-        self.priority_queue.enqueue(priority, item)
+        priority1=int(priority)
+        print(type(priority1))
+        self.priority_queue.enqueue(priority1, item)
         self.memory_manager.allocate(10)
     
     def Display_memory(self):
@@ -18,6 +20,7 @@ class ManageTasks:
 
     def execute_tasks(self):
         executed_tasks = self.priority_queue.dequeue_all()
+        print(executed_tasks)
         for tasks in executed_tasks:
             self.memory_manager.deallocate(10)
         return executed_tasks
