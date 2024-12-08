@@ -65,12 +65,12 @@ class OperatingSystemUI(QMainWindow):
 
         # Additional Text Fields for File Name and Path
         self.file_name_input = QLineEdit()
-        self.file_name_input.setPlaceholderText("Enter File Name")
-        task_form.addRow("File Name:", self.file_name_input)
+        self.file_name_input.setPlaceholderText("Enter File/Folder Name")
+        task_form.addRow("File/Folder Name:", self.file_name_input)
 
         self.file_path_input = QLineEdit()
-        self.file_path_input.setPlaceholderText("Enter File Path (e.g., root)")
-        task_form.addRow("File Path:", self.file_path_input)
+        self.file_path_input.setPlaceholderText("Enter Parent Folder Name (e.g., root)")
+        task_form.addRow("Parent Folder:", self.file_path_input)
 
         layout.addLayout(task_form)
 
