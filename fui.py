@@ -37,7 +37,6 @@ class OperatingSystemUI(QMainWindow):
         self.tabs.addTab(self.create_memory_manager_tab(), "Memory Management")
         self.tabs.addTab(self.create_file_system_tab(), "File Management")  # File Management Tab
         
-
         layout.addWidget(self.tabs)
         central_widget.setLayout(layout)
         self.setCentralWidget(central_widget)
@@ -53,22 +52,14 @@ class OperatingSystemUI(QMainWindow):
         # Task Name input field
         self.task_name_input = QLineEdit()
         self.task_name_input.setPlaceholderText("Enter Task Name")
+
         task_form.addRow("Task Name:", self.task_name_input)
 
         # Task Category dropdown
         self.task_category_dropdown = QComboBox()
         self.task_category_dropdown.addItems(["Select Category", "Email", "File Upload", "Backup", "Generate Report", "System Maintenance"])
+
         task_form.addRow("Select Task Category:", self.task_category_dropdown)
-
-        # Additional Text Fields for File Name and Path
-        self.file_name_input = QLineEdit()
-        self.file_name_input.setPlaceholderText("Enter File Name")
-        task_form.addRow("File Name:", self.file_name_input)
-
-        self.file_path_input = QLineEdit()
-        self.file_path_input.setPlaceholderText("Enter File Path (e.g., root)")
-        task_form.addRow("File Path:", self.file_path_input)
-
         layout.addLayout(task_form)
 
         # Task List and Viewer
@@ -93,7 +84,6 @@ class OperatingSystemUI(QMainWindow):
 
         tab.setLayout(layout)
         return tab
-
 
     def create_memory_manager_tab(self):
         tab = QWidget()
@@ -189,9 +179,38 @@ class OperatingSystemUI(QMainWindow):
         # File Management Section
         layout.addWidget(QLabel("File Management"))
 
+        # Form for File Management Actions
+        file_form = QFormLayout()
+
+        # Dropdown for File Actions
+        self.file_action_dropdown = QComboBox()
+        self.file_action_dropdown.addItems(["Select Action", "Add File", "Add Folder", "Remove File", "Remove Folder"])
+        file_form.addRow("Select Action:", self.file_action_dropdown)
+
+        # Name input field for file/folder
+        self.file_name_input = QLineEdit()
+        self.file_name_input.setPlaceholderText("Enter file/folder name")
+        file_form.addRow("Name:", self.file_name_input)
+
+        # Path input field for file/folder
+        self.file_path_input = QLineEdit()
+        self.file_path_input.setPlaceholderText("Enter parent path (e.g., root)")
+        file_form.addRow("Path:", self.file_path_input)
+
+        layout.addLayout(file_form)
+
+        # Add Task and Execute Task Buttons
+        self.add_task_btn = QPushButton("Add Task")
+        self.add_task_btn.clicked.connect(self.add_task_to_queue)  # Add file/folder to priority queue
+        layout.addWidget(self.add_task_btn)
+
+        self.execute_task_btn = QPushButton("Execute Tasks")
+        self.execute_task_btn.clicked.connect(self.execute_tasks)  # Execute tasks
+        layout.addWidget(self.execute_task_btn)
+
         # File System Hierarchy Display
         self.file_system_hierarchy = QTextEdit()
-        self.file_system_hierarchy.setReadOnly(True)  # Make it read-only for display purposes
+        self.file_system_hierarchy.setReadOnly(True)
         layout.addWidget(QLabel("File System Hierarchy:"))
         layout.addWidget(self.file_system_hierarchy)
 
@@ -201,6 +220,25 @@ class OperatingSystemUI(QMainWindow):
         tab.setLayout(layout)
         return tab
 
+    def add_task_to_queue(self):
+        """ Add file/folder task to the priority queue """
+        name = self.file_name_input.text()
+        is_folder = self.file_action_dropdown.currentText() == "Add Folder"
+
+        if not name or not self.file_path_input.text():
+            self.file_system_hierarchy.setText("Please enter valid name and path.")
+            return
+
+        if is_folder:
+            memory_needed = 20
+            priority = 2
+        else:
+            memory_needed = 10
+            priority = 1
+
+        result = self.task_manager.create_file_or_folder(self.file_path_input.text(), name, is_folder)
+        self.file_system_hierarchy.setText(result)
+        self.update_file_system_hierarchy()
 
     def update_file_system_hierarchy(self):
         # Fetch and display the current file system structure
