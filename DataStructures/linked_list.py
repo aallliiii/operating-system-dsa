@@ -8,6 +8,11 @@ class LinkedListMemoryManager:
     def __init__(self):
         self.head = None
     
+    # initialize memory:
+    def initialize_Memory(self, size,block_size):
+        for _ in range (size//block_size):
+            self.add_block(block_size)
+    
     # Add Block:
     def add_block(self, size):
         new_block = Node(size)
@@ -73,7 +78,7 @@ class LinkedListMemoryManager:
         return " -> ".join(result)
     
 
-# Initialize the memory manager
+# # Initialize the memory manager
 # manager = LinkedListMemoryManager()
 
 # # Add memory blocks
