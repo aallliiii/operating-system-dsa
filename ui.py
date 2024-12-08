@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import (
     QPushButton, QListWidget, QComboBox, QLineEdit, QTextEdit, QFormLayout, QProgressBar, QFrame, QTabWidget
 )
 from PyQt5.QtCore import QTimer
+from PyQt5.QtGui import QPalette, QColor, QFont
 
 
 class OperatingSystemUI(QMainWindow):
@@ -15,7 +16,7 @@ class OperatingSystemUI(QMainWindow):
         self.init_ui()
 
     def init_ui(self):
-        self.setWindowTitle("Operating System Demo")
+        self.setWindowTitle("Operating System (OS)")
         self.setGeometry(100, 100, 1200, 800)
 
         # Styling
@@ -28,7 +29,7 @@ class OperatingSystemUI(QMainWindow):
             QFrame { background-color: #555555; height: 2px; }
         """)
 
-        # Central Widget and Tabs
+        # Central Widget and Tabs:
         central_widget = QWidget()
         layout = QVBoxLayout()
         self.tabs = QTabWidget()
@@ -40,6 +41,7 @@ class OperatingSystemUI(QMainWindow):
         layout.addWidget(self.tabs)
         central_widget.setLayout(layout)
         self.setCentralWidget(central_widget)
+    
 
     def create_task_manager_tab(self):
         # Creates the Task Management Tab
