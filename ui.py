@@ -60,7 +60,7 @@ class OperatingSystemUI(QMainWindow):
 
         # Task Category dropdown
         self.task_category_dropdown = QComboBox()
-        self.task_category_dropdown.addItems(["Select Category", "Add File", "Remove File", "Search File", "Add Folder", "System Maintenance"])
+        self.task_category_dropdown.addItems(["Select Category", "Add File", "Remove File", "Search File", "Add Folder"])
         task_form.addRow("Select Task Category:", self.task_category_dropdown)
 
         # Additional Text Fields for File Name and Path
@@ -146,7 +146,6 @@ class OperatingSystemUI(QMainWindow):
             "Remove File": 2,
             "Search File": 3,
             "Add Folder": 4,
-            "System Maintenance": 5
         }
 
         if task_name and category != "Select Category":
