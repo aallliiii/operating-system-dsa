@@ -62,19 +62,19 @@ class FileSystem:
 if __name__ == "__main__":
     fs = FileSystem()
 
-    print(fs.add("root", "Documents", True))
-    print(fs.add("root", "Photos", True))
-    print(fs.add("Documents", "Resume.docx", False))
-    print(fs.add("Photos", "Vacation.jpg", False))
+    # print(fs.add("root", "Documents", True))
+    # print(fs.add("root", "Photos", True))
+    # print(fs.add("Documents", "Resume.docx", False))
+    # print(fs.add("Photos", "Vacation.jpg", False))
 
-    print("\nFile System Hierarchy:")
-    print(fs.display())
+    # print("\nFile System Hierarchy:")
+    # print(fs.display())
 
-    print(fs.search("Photos"))
-    print(fs.search("Resume.docx"))
-    print(fs.search("Music"))
+    # print(fs.search("Photos"))
+    # print(fs.search("Resume.docx"))
+    # print(fs.search("Music"))
 
-    print("\nDeleting 'Vacation.jpg':")
-    print(fs.delete("Vacation.jpg"))
-    print("\nFile System Hierarchy After Deletion:")
-    print(fs.display())
+    # print("\nDeleting 'Vacation.jpg':")
+    # print(fs.delete("Vacation.jpg"))
+    # print("\nFile System Hierarchy After Deletion:")
+    # print(fs.display())

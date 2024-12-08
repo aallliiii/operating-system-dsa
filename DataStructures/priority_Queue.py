@@ -5,19 +5,25 @@ class PriorityQueue:
         self._queue = []
     
     # Enqueue Function:
-    def enqueue(self, priority,item):
+    def enqueue(self, priority,item, file_name, path):
             priority_int=int(priority)
-            heapq.heappush(self._queue, (-priority_int, item))
-            print(f"Enqueued: {item} with priority {priority_int}")
+            task_name = item['task_name']
+            category = item['category']
+            heapq.heappush(self._queue, (-priority_int, task_name, category, file_name, path))
+            # print(f"Enqueued: {item} with priority {priority_int}")
        
 
     # Dequeue function:
     def dequeue(self):
         if self._queue:
-            priority,item=heapq.heappop(self._queue)
-            return item,-priority
+            priority,task_name, category,file_name, folder_name=heapq.heappop(self._queue)
+            item = {
+                'task_name': task_name,
+                'category': category,
+            }
+            return item,-priority, file_name, folder_name
         else:
-            return None,None
+            return None,None,None,None
         
     # peek function:
     def peek(self):
@@ -33,8 +39,9 @@ class PriorityQueue:
     def dequeue_all(self):
         tasks = []
         while not self.is_empty():
-            task, priority = self.dequeue()
-            tasks.append((task, priority))
+            task, priority, file_name, folder_name = self.dequeue()
+            
+            tasks.append((task, priority, file_name, folder_name))
         return tasks
         
 

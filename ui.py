@@ -1,4 +1,5 @@
 import sys
+
 from manageTasks import ManageTasks  # Assuming ManageTasks has task & memory logic
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel,
@@ -59,7 +60,7 @@ class OperatingSystemUI(QMainWindow):
 
         # Task Category dropdown
         self.task_category_dropdown = QComboBox()
-        self.task_category_dropdown.addItems(["Select Category", "Email", "File Upload", "Backup", "Generate Report", "System Maintenance"])
+        self.task_category_dropdown.addItems(["Select Category", "Add File", "Remove File", "Search File", "Add Folder", "System Maintenance"])
         task_form.addRow("Select Task Category:", self.task_category_dropdown)
 
         # Additional Text Fields for File Name and Path
@@ -104,8 +105,8 @@ class OperatingSystemUI(QMainWindow):
         # Memory Manager Section
         layout.addWidget(QLabel("Memory Manager"))
         self.memory_progress = QProgressBar()
-        self.memory_progress.setMaximum(500)
-        self.memory_progress.setValue(500)  # Mock value
+        self.memory_progress.setMaximum(1000)
+        self.memory_progress.setValue(1000)  # Mock value
         layout.addWidget(self.memory_progress)
 
         self.memory_status = QTextEdit()
@@ -125,7 +126,7 @@ class OperatingSystemUI(QMainWindow):
                 used_memory += current.size 
             current = current.next 
         
-        total_memory = 500  
+        total_memory = 1000  
         free_memory = total_memory - used_memory  
         self.memory_progress.setValue(free_memory)  
 
@@ -136,20 +137,33 @@ class OperatingSystemUI(QMainWindow):
     def add_task(self):
         task_name = self.task_name_input.text()
         category = self.task_category_dropdown.currentText()
+        file_name = self.file_name_input.text()
+        folder_name = self.file_path_input.text()
+        
 
         priorities = {
-            "Email": 1,
-            "File Upload": 2,
-            "Backup": 3,
-            "Generate Report": 4,
+            "Add File": 1,
+            "Remove File": 2,
+            "Search File": 3,
+            "Add Folder": 4,
             "System Maintenance": 5
         }
 
         if task_name and category != "Select Category":
             try:
                 # Use the selected category priority
+                name_and_category = {
+                    "task_name": task_name,
+                    "category": category
+                }
+
                 priority = int(priorities.get(category, 99))
-                self.task_manager.addTasksToQueue(task_name, priority)
+                if category == 'Add File' or category == 'Add Folder':
+                    self.task_manager.addTasksToQueue(name_and_category, priority, file_name, folder_name)
+                elif category == 'Remove File' or category == 'Search File':
+                    self.task_manager.addTasksToQueue(name_and_category, priority, file_name)
+                else:
+                    self.task_manager.addTasksToQueue(name_and_category, priority)
                 self.task_list.addItem(f"Scheduled: {task_name} (Priority: {priority})")
                 self.update_memory_status()
             except MemoryError as e:
@@ -163,7 +177,9 @@ class OperatingSystemUI(QMainWindow):
 
     def execute_tasks(self):
         # Executes tasks with a 5-second delay:
+        
         executed_tasks = self.task_manager.execute_tasks()
+    
         if not executed_tasks:
             self.task_viewer.addItem("No tasks to execute.")
             return
@@ -173,9 +189,27 @@ class OperatingSystemUI(QMainWindow):
     def execute_task_with_delay(self, tasks):
         # Executes tasks one by one with a 5-second delay:
         if tasks:
-            task, priority = tasks.pop(0)
-            self.task_viewer.addItem(f"Executing: {task} (Priority: {priority})")
+            task, priority, file_name, folder_name = tasks.pop(0)
+
+            
+            if task['category']=='Add File':
+
+                self.task_manager.create_file_or_folder(folder_name, file_name, is_folder=False)
+                self.task_viewer.addItem(f"Executing: {task['task_name']} for adding file. (Priority: {priority})")
+            elif task['category']=='Remove File':
+                self.task_manager.delete_file_or_folder(file_name)
+                self.task_viewer.addItem(f"Executing: {task['task_name']} for removing file (Priority: {priority})")
+            elif task['category'] == 'Add Folder':
+                self.task_manager.create_file_or_folder(folder_name, file_name, is_folder=True)
+                self.task_viewer.addItem(f"Executing: {task['task_name']} for adding folder (Priority: {priority})")
+            elif task['category'] == 'Search File':
+                result = self.task_manager.search_file(file_name)
+                self.task_viewer.addItem(f"Executing: {task['task_name']} for searching file (Priority: {priority})")
+                self.task_viewer.addItem(result)
+                
+            
             self.update_memory_status()
+            self.update_file_system_hierarchy()
 
             # Delay for 5 seconds before executing the next task
             QTimer.singleShot(5000, lambda: self.execute_task_with_delay(tasks))
