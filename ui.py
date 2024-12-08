@@ -175,27 +175,27 @@ class OperatingSystemUI(QMainWindow):
         self.task_category_dropdown.setCurrentIndex(0)
 
     def execute_tasks(self):
-        # Executes tasks with a 5-second delay:
-        
-        executed_tasks = self.task_manager.execute_tasks()
     
+
+        executed_tasks = self.task_manager.execute_tasks()
+
         if not executed_tasks:
             self.task_viewer.addItem("No tasks to execute.")
             return
 
-        self.execute_task_with_delay(executed_tasks)
+        
+        self.task_viewer.addItem("Execution of tasks has begun")
+        QTimer.singleShot(5000, lambda: self.execute_task_with_delay(executed_tasks))
 
     def execute_task_with_delay(self, tasks):
-        # Executes tasks one by one with a 5-second delay:
+        
         if tasks:
             task, priority, file_name, folder_name = tasks.pop(0)
 
-            
-            if task['category']=='Add File':
-
+            if task['category'] == 'Add File':
                 self.task_manager.create_file_or_folder(folder_name, file_name, is_folder=False)
                 self.task_viewer.addItem(f"Executing: {task['task_name']} for adding file. (Priority: {priority})")
-            elif task['category']=='Remove File':
+            elif task['category'] == 'Remove File':
                 self.task_manager.delete_file_or_folder(file_name)
                 self.task_viewer.addItem(f"Executing: {task['task_name']} for removing file (Priority: {priority})")
             elif task['category'] == 'Add Folder':
@@ -205,16 +205,16 @@ class OperatingSystemUI(QMainWindow):
                 result = self.task_manager.search_file(file_name)
                 self.task_viewer.addItem(f"Executing: {task['task_name']} for searching file (Priority: {priority})")
                 self.task_viewer.addItem(result)
-                
-            
+
             self.update_memory_status()
             self.update_file_system_hierarchy()
 
-            # Delay for 5 seconds before executing the next task
+            
             QTimer.singleShot(5000, lambda: self.execute_task_with_delay(tasks))
         else:
             self.task_viewer.addItem("All tasks executed. Memory reset.")
             self.update_memory_status()
+
 
     def create_file_system_tab(self):
         # File Management Tab
