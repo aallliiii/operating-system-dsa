@@ -1,8 +1,9 @@
 class Node:
-    def __init__(self,size,allocated=False, nextAddress = None):
+    def __init__(self,size,allocated=False, nextAddress = None, task_name = None):
         self.size = size
         self.allocated = allocated
         self.next=nextAddress
+        self.task_name = task_name
 
 class LinkedListMemoryManager:
     def __init__(self):
@@ -25,7 +26,7 @@ class LinkedListMemoryManager:
             current.next = new_block
              
     # allocate:
-    def allocate(self, size):
+    def allocate(self, size, item):
         current = self.head
         while current:
             if not current.allocated and current.size>= size:
@@ -35,6 +36,7 @@ class LinkedListMemoryManager:
 
                 current.allocated = True
                 current.size = allocated_block
+                current.task_name = item['task_name'] if item else None
 
                 if remaining_size > 0:
                     new_block_of_memory = Node(remaining_size,False,current.next)
@@ -69,13 +71,25 @@ class LinkedListMemoryManager:
     
     # Display Memory:
     def display_memory(self):
-        result=[]
+        # Initialize result list with headers
+        result = []
+        header = f"{'Size':^10} | {'State':^10} | {'Task Name':^20}"
+        divider = "-" * len(header)
+        result.append(header)
+        result.append(divider)
+
+        # Traverse the memory blocks
         current = self.head
         while current:
-            state="Allocated" if current.allocated else "Free"
-            result.append(f"[{current.size}MB - {state}]")
+            state = "Allocated" if current.allocated else "Free"
+            task_name = current.task_name if current.allocated else ""
+            result.append(f"{current.size:^10} | {state:^10} | {task_name:<20}")
             current = current.next
-        return " -> ".join(result)
+
+        # Join rows with newline for clean table display
+        return "\n".join(result)
+
+
     
 
 # # Initialize the memory manager
