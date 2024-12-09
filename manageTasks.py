@@ -26,24 +26,24 @@ class ManageTasks:
         return executed_tasks
     
     def create_file_or_folder(self, parent_name, name, is_folder=False):
-        """ Create a file or folder in the file system """
+        # Create a file or folder in the file system:
         self.memory_manager.deallocate(10)
         return self.file_system.add(parent_name, name, is_folder)
 
     def delete_file_or_folder(self, name):
-        """ Delete a file or folder from the file system """
+        # Delete a file or folder from the file system :
         self.memory_manager.deallocate(10)
         return self.file_system.delete(name)
 
     def search_file(self, name):
-        """ Search for a file or folder in the file system """
+        # Search for a file or folder in the file system :
         self.memory_manager.deallocate(10)
         return self.file_system.search(name)
 
     def display_file_system(self):
-        """ Return the current file system structure as a string """
+        # Return the current file system structure as a string :
         return self.file_system.display()
 
     def update_file_or_folder(self, old_name, new_name, is_folder=False):
-        """ Update file or folder name """
+        # Update file or folder name :
         return self.file_system.update(old_name, new_name, is_folder)
