@@ -1,9 +1,8 @@
-
 import sys
 from manageTasks import ManageTasks  # Assuming ManageTasks has task & memory logic
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel,
-    QPushButton, QListWidget, QComboBox, QLineEdit, QTextEdit, QFormLayout, QProgressBar, QFrame, QTabWidget
+    QPushButton, QListWidget, QComboBox, QLineEdit, QTextEdit, QFormLayout, QProgressBar, QTabWidget
 )
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QPalette, QColor, QFont
@@ -37,6 +36,8 @@ class OperatingSystemUI(QMainWindow):
         # Add Tabs
         self.tabs.addTab(self.create_task_manager_tab(), "Task Management")
         self.tabs.addTab(self.create_memory_manager_tab(), "Memory Management")
+        self.tabs.addTab(self.create_file_system_tab(), "File Management")  # File Management Tab
+        
 
         layout.addWidget(self.tabs)
         central_widget.setLayout(layout)
@@ -44,13 +45,11 @@ class OperatingSystemUI(QMainWindow):
     
 
     def create_task_manager_tab(self):
-        # Creates the Task Management Tab
         tab = QWidget()
         layout = QVBoxLayout()
 
         # Task Manager Section
         layout.addWidget(QLabel("Task Manager"))
-
         task_form = QFormLayout()
 
         # Task Name input field
@@ -90,15 +89,14 @@ class OperatingSystemUI(QMainWindow):
         return tab
 
     def create_memory_manager_tab(self):
-        # Creates the Memory Management Tab
         tab = QWidget()
         layout = QVBoxLayout()
 
         # Memory Manager Section
         layout.addWidget(QLabel("Memory Manager"))
         self.memory_progress = QProgressBar()
-        self.memory_progress.setMaximum(500)  # Assuming 500MB total memory
-        self.memory_progress.setValue(500)  # Start with full memory available
+        self.memory_progress.setMaximum(500)
+        self.memory_progress.setValue(500)  # Mock value
         layout.addWidget(self.memory_progress)
 
         self.memory_status = QTextEdit()
@@ -110,7 +108,6 @@ class OperatingSystemUI(QMainWindow):
         return tab
 
     def update_memory_status(self):
-
         # Updates the memory display and progress bar
         current = self.task_manager.memory_manager.head 
         used_memory = 0
@@ -128,8 +125,6 @@ class OperatingSystemUI(QMainWindow):
         self.memory_status.setText(f"Memory Blocks:\n{memory_blocks}")
 
     def add_task(self):
-
-        # Adds a task to the task queue and allocates memory:
         task_name = self.task_name_input.text()
         category = self.task_category_dropdown.currentText()
 
@@ -158,7 +153,6 @@ class OperatingSystemUI(QMainWindow):
         self.task_category_dropdown.setCurrentIndex(0)
 
     def execute_tasks(self):
-
         # Executes tasks with a 5-second delay:
         executed_tasks = self.task_manager.execute_tasks()
         if not executed_tasks:
@@ -168,7 +162,6 @@ class OperatingSystemUI(QMainWindow):
         self.execute_task_with_delay(executed_tasks)
 
     def execute_task_with_delay(self, tasks):
-
         # Executes tasks one by one with a 5-second delay:
         if tasks:
             task, priority = tasks.pop(0)
@@ -180,6 +173,80 @@ class OperatingSystemUI(QMainWindow):
         else:
             self.task_viewer.addItem("All tasks executed. Memory reset.")
             self.update_memory_status()
+
+    def create_file_system_tab(self):
+        # File Management Tab
+        tab = QWidget()
+        layout = QVBoxLayout()
+
+        # File Management Section
+        layout.addWidget(QLabel("File Management"))
+
+        # Form for File Management Actions
+        file_form = QFormLayout()
+
+        # Dropdown for File Actions
+        self.file_action_dropdown = QComboBox()
+        self.file_action_dropdown.addItems(["Select Action", "Add File", "Add Folder", "Remove File", "Remove Folder"])
+        file_form.addRow("Select Action:", self.file_action_dropdown)
+
+        # Name input field for file/folder
+        self.file_name_input = QLineEdit()
+        self.file_name_input.setPlaceholderText("Enter file/folder name")
+        file_form.addRow("Name:", self.file_name_input)
+
+        # Path input field for file/folder
+        self.file_path_input = QLineEdit()
+        self.file_path_input.setPlaceholderText("Enter parent path (e.g., root)")
+        file_form.addRow("Path:", self.file_path_input)
+
+        layout.addLayout(file_form)
+
+        # Button to perform the selected action
+        self.perform_action_btn = QPushButton("Perform Action")
+        layout.addWidget(self.perform_action_btn)
+
+        # File System Hierarchy Display
+        self.file_system_hierarchy = QTextEdit()
+        self.file_system_hierarchy.setReadOnly(True)
+        layout.addWidget(QLabel("File System Hierarchy:"))
+        layout.addWidget(self.file_system_hierarchy)
+
+        # Connect button click to the action handler
+        self.perform_action_btn.clicked.connect(self.file_management_action)
+
+        tab.setLayout(layout)
+        return tab
+
+    def file_management_action(self):
+        # Get values from input fields
+        action = self.file_action_dropdown.currentText()
+        name = self.file_name_input.text()
+        path = self.file_path_input.text()
+
+        if action == "Add File":
+            # Call method to add file
+            result = self.task_manager.create_file_or_folder(path, name, is_folder=False)
+        elif action == "Add Folder":
+            # Call method to add folder
+            result = self.task_manager.create_file_or_folder(path, name, is_folder=True)
+        elif action == "Remove File":
+            # Call method to remove file
+            result = self.task_manager.delete_file_or_folder(name, is_folder=False)
+        elif action == "Remove Folder":
+            # Call method to remove folder
+            result = self.task_manager.delete_file_or_folder(name, is_folder=True)
+        else:
+            result = "Invalid action selected!"
+
+        # Display result and update file system hierarchy
+        self.file_system_hierarchy.setText(result)
+        self.update_file_system_hierarchy()
+
+    def update_file_system_hierarchy(self):
+        # Fetch and display the current file system structure
+        hierarchy = self.task_manager.file_system.display()
+        self.file_system_hierarchy.setText(hierarchy)
 
 
 def main():
