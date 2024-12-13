@@ -62,7 +62,27 @@ class OperatingSystemUI(QMainWindow):
         # Task Category dropdown
         self.task_category_dropdown = QComboBox()
         self.task_category_dropdown.addItems(["Select Category", "Add File", "Remove File", "Search File", "Add Folder"])
+        self.task_category_dropdown.setStyleSheet("""
+            QComboBox {
+                color: #a4c639; /* Selected text color */
+                background-color: #3b3b3b; /* Background color of the combobox */
+                border: 1px solid #a4c639; /* Border color */
+            }
+            QComboBox QAbstractItemView {
+                color: #a4c639; /* Item text color */
+                background-color: #3b3b3b; /* Item background color */
+            }
+            QComboBox::drop-down {
+                border: 1px solid #a4c639; /* Border for the dropdown arrow */
+            }
+        """)
         task_form.addRow("Select Task Category:", self.task_category_dropdown)
+
+
+
+        #self.task_category_dropdown = QComboBox()
+        #self.task_category_dropdown.addItems(["Select Category", "Add File", "Remove File", "Search File", "Add Folder"])
+        #task_form.addRow("Select Task Category:", self.task_category_dropdown)
 
         # Additional Text Fields for File Name and Path
         self.file_name_input = QLineEdit()
