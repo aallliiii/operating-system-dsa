@@ -104,6 +104,7 @@ class OperatingSystemUI(QMainWindow):
         layout.addWidget(QLabel("Execution Tracker:"))
         layout.addWidget(self.task_viewer)
 
+
         # Buttons
         self.add_task_btn = QPushButton("Add Task")
         self.execute_task_btn = QPushButton("Execute Tasks")
