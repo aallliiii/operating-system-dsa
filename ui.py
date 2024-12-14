@@ -7,6 +7,8 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QPalette, QColor, QFont
+from DataStructures.Graph import Graph  # Assuming the Graph class is in graph.py
+
 
 
 class OperatingSystemUI(QMainWindow):
@@ -39,6 +41,7 @@ class OperatingSystemUI(QMainWindow):
         self.tabs.addTab(self.create_task_manager_tab(), "Task Management")
         self.tabs.addTab(self.create_memory_manager_tab(), "Memory Management")
         self.tabs.addTab(self.create_file_system_tab(), "File Management")  # File Management Tab
+        self.tabs.addTab(self.create_networking_tab(), "Networking")
         
 
         layout.addWidget(self.tabs)
@@ -265,6 +268,90 @@ class OperatingSystemUI(QMainWindow):
         # Fetch and display the current file system structure
         hierarchy = self.task_manager.file_system.display()
         self.file_system_hierarchy.setText(hierarchy)
+
+    def create_networking_tab(self):
+        # Networking Tab
+        tab = QWidget()
+        layout = QVBoxLayout()
+
+        # Networking Section
+        layout.addWidget(QLabel("Networking Operations"))
+
+        # Form for Graph Operations
+        graph_form = QFormLayout()
+
+        # Text Input for Node Name
+        self.node_name_input = QLineEdit()
+        self.node_name_input.setPlaceholderText("Enter Node Name")
+        graph_form.addRow("Node Name:", self.node_name_input)
+
+        # Text Input for Connection (from and to node)
+        self.connection_from_input = QLineEdit()
+        self.connection_from_input.setPlaceholderText("Enter From Node")
+        graph_form.addRow("From Node:", self.connection_from_input)
+
+        self.connection_to_input = QLineEdit()
+        self.connection_to_input.setPlaceholderText("Enter To Node")
+        graph_form.addRow("To Node:", self.connection_to_input)
+
+        # Action Dropdown for graph operations
+        self.graph_action_dropdown = QComboBox()
+        self.graph_action_dropdown.addItems([
+            "Select Action", "Add Node", "Add Connection", "BFS", "DFS", "Dijkstra"
+        ])
+        graph_form.addRow("Select Action:", self.graph_action_dropdown)
+
+        layout.addLayout(graph_form)
+
+        # Buttons
+        self.perform_graph_action_btn = QPushButton("Perform Action")
+        layout.addWidget(self.perform_graph_action_btn)
+
+        # Connect button to action handler
+        self.perform_graph_action_btn.clicked.connect(self.graph_action)
+
+        # Add the graph hierarchy display
+        self.graph_output = QTextEdit()
+        self.graph_output.setReadOnly(True)
+        layout.addWidget(QLabel("Graph Output:"))
+        layout.addWidget(self.graph_output)
+
+        tab.setLayout(layout)
+        return tab
+    
+    def graph_action(self):
+        action = self.graph_action_dropdown.currentText()
+        node_name = self.node_name_input.text()
+        from_node = self.connection_from_input.text()
+        to_node = self.connection_to_input.text()
+
+        if action == "Add Node":
+            self.graph.add_node(node_name)
+            self.graph_output.setText(f"Node '{node_name}' added.")
+        elif action == "Add Connection":
+            weight = float(input("Enter the connection weight: "))
+            self.graph.add_edge(from_node, to_node, weight)
+            self.graph_output.setText(f"Connection added between '{from_node}' and '{to_node}' with weight {weight}.")
+        elif action == "BFS":
+            start_node = node_name  # Start BFS from this node
+            result = self.graph.bfs(start_node)
+            self.graph_output.setText(f"BFS from '{start_node}': {result}")
+        elif action == "DFS":
+            start_node = node_name  # Start DFS from this node
+            result = self.graph.dfs(start_node)
+            self.graph_output.setText(f"DFS from '{start_node}': {result}")
+        elif action == "Dijkstra":
+            start_node = from_node
+            end_node = to_node
+            distance, path = self.graph.dijkstra_Algorithm(start_node, end_node)
+            if distance == float('inf'):
+                self.graph_output.setText(f"No path exists between '{start_node}' and '{end_node}'.")
+            else:
+                self.graph_output.setText(f"Shortest path from '{start_node}' to '{end_node}': {distance} with path: {' -> '.join(path)}")
+        else:
+            self.graph_output.setText("Invalid action selected!")
+
+
 
 
 def main():
