@@ -3,7 +3,7 @@ import sys
 from manageTasks import ManageTasks  # Assuming ManageTasks has task & memory logic
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel,
-    QPushButton, QListWidget, QComboBox, QLineEdit, QTextEdit, QFormLayout, QProgressBar, QTabWidget
+    QPushButton, QListWidget, QComboBox, QLineEdit, QTextEdit, QFormLayout, QProgressBar, QTabWidget, QHBoxLayout, QMessageBox, QInputDialog
 )
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QPalette, QColor, QFont
@@ -16,6 +16,7 @@ class OperatingSystemUI(QMainWindow):
         super().__init__()
         self.task_manager = ManageTasks()  # Task and Memory logic
         self.init_ui()
+        self.graph = Graph()  # Network Graph
 
     def init_ui(self):
         self.setWindowTitle("Operating System (OS)")
@@ -275,84 +276,118 @@ class OperatingSystemUI(QMainWindow):
         tab = QWidget()
         layout = QVBoxLayout()
 
-        # Networking Section
-        layout.addWidget(QLabel("Networking Operations"))
+        # Main Split Layout (Window 1 and Window 2)
+        split_layout = QHBoxLayout()
 
-        # Form for Graph Operations
-        graph_form = QFormLayout()
+        # ---------------- Window 1 ----------------
+        window1_layout = QVBoxLayout()
+        #window1_layout.addWidget(QLabel("Window 1"))
 
-        # Text Input for Node Name
-        self.node_name_input = QLineEdit()
-        self.node_name_input.setPlaceholderText("Enter Node Name")
-        graph_form.addRow("Node Name:", self.node_name_input)
+        # Device Name Input
+        self.device_name_input = QLineEdit()
+        self.device_name_input.setPlaceholderText("Device Name (text box)")
+        window1_layout.addWidget(self.device_name_input)
 
-        # Text Input for Connection (from and to node)
-        self.connection_from_input = QLineEdit()
-        self.connection_from_input.setPlaceholderText("Enter From Node")
-        graph_form.addRow("From Node:", self.connection_from_input)
+        # Combo Box for Task Selection
+        self.device_action_dropdown = QComboBox()
+        self.device_action_dropdown.addItems([
+            "Add Device", "Remove Device"
+        ])
+        window1_layout.addWidget(self.device_action_dropdown)
 
-        self.connection_to_input = QLineEdit()
-        self.connection_to_input.setPlaceholderText("Enter To Node")
-        graph_form.addRow("To Node:", self.connection_to_input)
+        # Task Done Button
+        self.task_done_btn_window1 = QPushButton("Task Done")
+        window1_layout.addWidget(self.task_done_btn_window1)
+        self.task_done_btn_window1.clicked.connect(self.handle_window1_action)
 
-        # Action Dropdown for graph operations
+        # Add Window 1 to Split Layout
+        split_layout.addLayout(window1_layout)
+
+        # ---------------- Window 2 ----------------
+        window2_layout = QVBoxLayout()
+        #window2_layout.addWidget(QLabel("Window 2"))
+
+        # Device A Input
+        self.device_a_input = QLineEdit()
+        self.device_a_input.setPlaceholderText("Device A")
+        window2_layout.addWidget(self.device_a_input)
+
+        # Device B Input
+        self.device_b_input = QLineEdit()
+        self.device_b_input.setPlaceholderText("Device B")
+        window2_layout.addWidget(self.device_b_input)
+
+        # Combo Box for Graph Actions
         self.graph_action_dropdown = QComboBox()
         self.graph_action_dropdown.addItems([
-            "Select Action", "Add Node", "Add Connection", "BFS", "DFS", "Dijkstra"
+            "Add a Connection", "Remove a Connection", "BFS (Discover Reachable Devices)",
+            "DFS (Explore Connections)", "Dijkstra's Algorithm (Shortest Path)"
         ])
-        graph_form.addRow("Select Action:", self.graph_action_dropdown)
+        window2_layout.addWidget(self.graph_action_dropdown)
 
-        layout.addLayout(graph_form)
+        # Task Done Button for Window 2
+        self.task_done_btn_window2 = QPushButton("Task Done")
+        window2_layout.addWidget(self.task_done_btn_window2)
+        self.task_done_btn_window2.clicked.connect(self.handle_window2_action)
 
-        # Buttons
-        self.perform_graph_action_btn = QPushButton("Perform Action")
-        layout.addWidget(self.perform_graph_action_btn)
+        # Add Window 2 to Split Layout
+        split_layout.addLayout(window2_layout)
 
-        # Connect button to action handler
-        self.perform_graph_action_btn.clicked.connect(self.graph_action)
+        # Add the split layout to the main layout
+        layout.addLayout(split_layout)
 
-        # Add the graph hierarchy display
-        self.graph_output = QTextEdit()
-        self.graph_output.setReadOnly(True)
-        layout.addWidget(QLabel("Graph Output:"))
-        layout.addWidget(self.graph_output)
+        # Visualize Button
+        self.visualize_btn = QPushButton("Visualize")
+        layout.addWidget(self.visualize_btn)
+        self.visualize_btn.clicked.connect(self.visualize_graph)
 
         tab.setLayout(layout)
         return tab
-    
-    def graph_action(self):
-        action = self.graph_action_dropdown.currentText()
-        node_name = self.node_name_input.text()
-        from_node = self.connection_from_input.text()
-        to_node = self.connection_to_input.text()
 
-        if action == "Add Node":
-            self.graph.add_node(node_name)
-            self.graph_output.setText(f"Node '{node_name}' added.")
-        elif action == "Add Connection":
-            weight = float(input("Enter the connection weight: "))
-            self.graph.add_edge(from_node, to_node, weight)
-            self.graph_output.setText(f"Connection added between '{from_node}' and '{to_node}' with weight {weight}.")
-        elif action == "BFS":
-            start_node = node_name  # Start BFS from this node
-            result = self.graph.bfs(start_node)
-            self.graph_output.setText(f"BFS from '{start_node}': {result}")
-        elif action == "DFS":
-            start_node = node_name  # Start DFS from this node
-            result = self.graph.dfs(start_node)
-            self.graph_output.setText(f"DFS from '{start_node}': {result}")
-        elif action == "Dijkstra":
-            start_node = from_node
-            end_node = to_node
-            distance, path = self.graph.dijkstra_Algorithm(start_node, end_node)
-            if distance == float('inf'):
-                self.graph_output.setText(f"No path exists between '{start_node}' and '{end_node}'.")
-            else:
-                self.graph_output.setText(f"Shortest path from '{start_node}' to '{end_node}': {distance} with path: {' -> '.join(path)}")
+    def handle_window1_action(self):
+        action = self.device_action_dropdown.currentText()
+        device_name = self.device_name_input.text()
+
+        if action == "Add Device":
+            self.graph.add_node(device_name)
+            QMessageBox.information(self, "Success", f"Device '{device_name}' added.")
+        elif action == "Remove Device":
+            self.graph.remove_node(device_name)
+            QMessageBox.information(self, "Success", f"Device '{device_name}' removed.")
         else:
-            self.graph_output.setText("Invalid action selected!")
+            QMessageBox.warning(self, "Error", "Invalid action selected!")
 
+    def handle_window2_action(self):
+        action = self.graph_action_dropdown.currentText()
+        device_a = self.device_a_input.text()
+        device_b = self.device_b_input.text()
 
+        if action == "Add a Connection":
+            weight, ok = QInputDialog.getDouble(self, "Connection Weight", "Enter weight:")
+            if ok:
+                self.graph.add_edge(device_a, device_b, weight)
+                QMessageBox.information(self, "Success", f"Connection added between '{device_a}' and '{device_b}' with weight {weight}.")
+        elif action == "Remove a Connection":
+            self.graph.remove_edge(device_a, device_b)
+            QMessageBox.information(self, "Success", f"Connection removed between '{device_a}' and '{device_b}'.")
+        elif action == "BFS (Discover Reachable Devices)":
+            result = self.graph.bfs(device_a)
+            QMessageBox.information(self, "BFS Result", f"Reachable devices from '{device_a}': {result}")
+        elif action == "DFS (Explore Connections)":
+            result = self.graph.dfs(device_a)
+            QMessageBox.information(self, "DFS Result", f"Connections explored from '{device_a}': {result}")
+        elif action == "Dijkstra's Algorithm (Shortest Path)":
+            distance, path = self.graph.dijkstra_Algorithm(device_a, device_b)
+            if distance == float('inf'):
+                QMessageBox.information(self, "Dijkstra Result", f"No path exists between '{device_a}' and '{device_b}'.")
+            else:
+                QMessageBox.information(self, "Dijkstra Result", f"Shortest path from '{device_a}' to '{device_b}': Distance {distance}, Path: {' -> '.join(path)}")
+        else:
+            QMessageBox.warning(self, "Error", "Invalid action selected!")
+
+    def visualize_graph(self):
+        self.graph.visualize()
+        QMessageBox.information(self, "Visualize", "Graph visualization complete.")
 
 
 def main():
