@@ -36,6 +36,7 @@ class OperatingSystemUI(QMainWindow):
         central_widget = QWidget()
         layout = QVBoxLayout()
         self.tabs = QTabWidget()
+        
 
         # Add Tabs
         self.tabs.addTab(self.create_task_manager_tab(), "Task Management")
