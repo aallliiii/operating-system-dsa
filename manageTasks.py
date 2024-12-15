@@ -15,7 +15,14 @@ class ManageTasks:
         priority1=int(priority)
         # print(type(priority1))
         self.priority_queue.enqueue(priority1, item, file_name, folder_name)
-        self.memory_manager.allocate(10, item)
+        if priority1==1:
+            self.memory_manager.allocate(10, item)
+        if priority1==2:
+            self.memory_manager.allocate(20, item)
+        if priority1==3:
+            self.memory_manager.allocate(40, item)
+        if priority1==4:
+            self.memory_manager.allocate(80, item)
     
     def Display_memory(self):
         return self.memory_manager.display_memory()
