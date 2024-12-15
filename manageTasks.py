@@ -22,7 +22,7 @@ class ManageTasks:
         if priority1==3:
             self.memory_manager.allocate(40, item)
         if priority1==4:
-            self.memory_manager.allocate(80, item)
+            self.memory_manager.allocate(40, item)
     
     def Display_memory(self):
         return self.memory_manager.display_memory()
@@ -34,7 +34,7 @@ class ManageTasks:
     
     def create_file_or_folder(self, parent_name, name, is_folder=False):
         # Create a file or folder in the file system:
-        self.memory_manager.deallocate(10)
+        self.memory_manager.deallocate(40)
         return self.file_system.add(parent_name, name, is_folder)
 
     def delete_file_or_folder(self, name):
@@ -44,7 +44,7 @@ class ManageTasks:
 
     def search_file(self, name):
         # Search for a file or folder in the file system :
-        self.memory_manager.deallocate(10)
+        self.memory_manager.deallocate(20)
         return self.file_system.search(name)
 
     def display_file_system(self):

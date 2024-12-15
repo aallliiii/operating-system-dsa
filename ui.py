@@ -302,6 +302,7 @@ class OperatingSystemUI(QMainWindow):
         
         self.task_viewer.addItem("Execution of tasks has begun")
         QTimer.singleShot(5000, lambda: self.execute_task_with_delay(executed_tasks))
+        
 
     def execute_task_with_delay(self, tasks):
         
@@ -329,7 +330,7 @@ class OperatingSystemUI(QMainWindow):
                 self.executed_tasks.append(task)
                 self.Priority_list.append(priority)
                 self.task_viewer.addItem(result)
-            print(self.executed_tasks)
+            
             self.display_unsorted_tasks()
 
             self.update_memory_status()
