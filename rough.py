@@ -1,4 +1,5 @@
 import sys
+
 from manageTasks import ManageTasks  # Assuming ManageTasks has task & memory logic
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel,
@@ -8,9 +9,6 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QPalette, QColor, QFont
 from DataStructures.Graph import Graph  # Assuming the Graph class is in graph.py
-from DataStructures.Sorting_Algo import SortingAlgorithm
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
 
 
 
@@ -18,31 +16,14 @@ class OperatingSystemUI(QMainWindow):
     def __init__(self):
         super().__init__()
         self.task_manager = ManageTasks()  # Task and Memory logic
-        self.executed_tasks = []  # Track the executed tasks
-        self.Priority_list=[]
         self.init_ui()
         self.graph = Graph()  # Network Graph
-       
 
     def init_ui(self):
         self.setWindowTitle("Operating System (OS)")
         self.setGeometry(100, 100, 1200, 800)
+      
 
-        # Central Widget and Tabs:
-        central_widget = QWidget()
-        layout = QVBoxLayout()
-        self.tabs = QTabWidget()
-
-        # Add Tabs
-        self.tabs.addTab(self.create_task_manager_tab(), "Task Management")
-        self.tabs.addTab(self.create_memory_manager_tab(), "Memory Management")
-        self.tabs.addTab(self.create_file_system_tab(), "File Management")  # File Management Tab
-        self.tabs.addTab(self.create_networking_tab(), "Networking")
-        self.tabs.addTab(self.create_document_tab(), "Document")  # New Tab for Document Sorting
-
-        layout.addWidget(self.tabs)
-        central_widget.setLayout(layout)
-        self.setCentralWidget(central_widget)
         # Styling
         self.setStyleSheet("""
             QMainWindow { background-color: #2b2b2b; color: #a4c639; }
@@ -53,89 +34,22 @@ class OperatingSystemUI(QMainWindow):
             QFrame { background-color: #555555; height: 2px; }
         """)
 
-    def create_document_tab(self):
-        # Document Tab
-        tab = QWidget()
+        # Central Widget and Tabs:
+        central_widget = QWidget()
         layout = QVBoxLayout()
-
-        # Document Management Section
-        layout.addWidget(QLabel("Executed Tasks History"))
-
-        # Display Area for Sorted Task History
-        self.task_history_display = QTextEdit()
-        self.task_history_display.setReadOnly(True)  # Make it read-only for display purposes
-        layout.addWidget(self.task_history_display)
-      
-
-        # Button to Sort Executed Tasks
-        self.sort_tasks_btn = QPushButton("Sort Executed Tasks")
-        self.sort_tasks_btn.clicked.connect(self.sort_executed_tasks)
-        layout.addWidget(self.sort_tasks_btn)
-
-        # Button to Generate PDF Report
-        self.generate_pdf_btn = QPushButton("Generate PDF Report")
-        self.generate_pdf_btn.setEnabled(True)  # Initially disabled
-        self.generate_pdf_btn.clicked.connect(self.generate_pdf_report)
-        layout.addWidget(self.generate_pdf_btn)
-
-        self.display_unsorted_tasks()
-
-        tab.setLayout(layout)
-        return tab
-    
-    def generate_pdf_report(self):
-        # Generate PDF Report from sorted tasks
-        pdf_file = "sorted_tasks_report.pdf"
-        c = canvas.Canvas(pdf_file, pagesize=letter)
-        c.setFont("Helvetica", 12)
-
-        # Title
-        c.drawString(100, 750, "Sorted Task Report")
-
-        # Loop through sorted tasks and add them to the PDF
-        y_position = 730
-        for task in self.executed_tasks:
-            task_text = f"Task: {task['task_name']} (Category: {task['category']})"
-            c.drawString(100, y_position, task_text)
-            y_position -= 20
-
-        # Save the PDF file
-        c.save()
-
-        QMessageBox.information(self, "PDF Report", f"PDF report generated successfully: {pdf_file}")
-    
-    def display_unsorted_tasks(self):
-        if not self.executed_tasks:
-           self.task_history_display.setText("No tasks executed yet.")
-           return
+        self.tabs = QTabWidget()
         
-        print("Displaying tasks...")  # Debugging print statement
 
-        unsorted_tasks_text = "\n".join([f"Task: {task['task_name']} (Category: {task['category']})" for task in self.executed_tasks])
-        self.task_history_display.setText(unsorted_tasks_text)
+        # Add Tabs
+        self.tabs.addTab(self.create_task_manager_tab(), "Task Management")
+        self.tabs.addTab(self.create_memory_manager_tab(), "Memory Management")
+        self.tabs.addTab(self.create_file_system_tab(), "File Management")  # File Management Tab
+        self.tabs.addTab(self.create_networking_tab(), "Networking")
+        
 
-    def sort_executed_tasks(self):
-        # Sort the executed tasks using merge sort from MergeSort class
-        if not self.executed_tasks:
-            self.task_history_display.setText("No tasks executed yet.")
-            return
-
-        # Create an instance of MergeSort and sort the executed tasks
-        sorted_tasks,pri = SortingAlgorithm.merge_sort(self.executed_tasks,self.Priority_list)
-
-        # Display the sorted tasks in the text area
-        sorted_tasks_text = "\n".join([f"Task: {task['task_name']} (Category: {task['category']})" for task in sorted_tasks])
-        self.task_history_display.setText(sorted_tasks_text)
-
-    # def sort_executed_tasks(self):
-    #     merge_sorter = MergeSort()
-    #     sorted_tasks = merge_sorter.merge_sort(self.executed_tasks)
-    #     # Now you can use the sorted tasks
-    #     self.task_viewer.addItem("Sorted executed tasks based on priority:")
-    #     for task in sorted_tasks:
-    #        self.task_viewer.addItem(f"Task: {task['task_name']} (Priority: {task['priority']})")
-
-    
+        layout.addWidget(self.tabs)
+        central_widget.setLayout(layout)
+        self.setCentralWidget(central_widget)
     
 
     def create_task_manager_tab(self):
@@ -311,26 +225,16 @@ class OperatingSystemUI(QMainWindow):
             if task['category'] == 'Add File':
                 self.task_manager.create_file_or_folder(folder_name, file_name, is_folder=False)
                 self.task_viewer.addItem(f"Executing: {task['task_name']} for adding file. (Priority: {priority})")
-                self.executed_tasks.append(task)
-                self.Priority_list.append(priority)
             elif task['category'] == 'Remove File':
                 self.task_manager.delete_file_or_folder(file_name)
                 self.task_viewer.addItem(f"Executing: {task['task_name']} for removing file (Priority: {priority})")
-                self.executed_tasks.append(task)
-                self.Priority_list.append(priority)
             elif task['category'] == 'Add Folder':
                 self.task_manager.create_file_or_folder(folder_name, file_name, is_folder=True)
                 self.task_viewer.addItem(f"Executing: {task['task_name']} for adding folder (Priority: {priority})")
-                self.executed_tasks.append(task)
-                self.Priority_list.append(priority)
             elif task['category'] == 'Search File':
                 result = self.task_manager.search_file(file_name)
                 self.task_viewer.addItem(f"Executing: {task['task_name']} for searching file (Priority: {priority})")
-                self.executed_tasks.append(task)
-                self.Priority_list.append(priority)
                 self.task_viewer.addItem(result)
-            print(self.executed_tasks)
-            self.display_unsorted_tasks()
 
             self.update_memory_status()
             self.update_file_system_hierarchy()
