@@ -522,7 +522,7 @@ class OperatingSystemUI(QMainWindow):
 
     def visualize_graph(self):
         self.graph.visualize()
-        QMessageBox.information(self, "Visualize", "Graph visualization complete.")
+        
 
 
 
