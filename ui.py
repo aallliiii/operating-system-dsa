@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel,
     QPushButton, QListWidget, QComboBox, QLineEdit, QTextEdit, QFormLayout, QProgressBar, QTabWidget, QHBoxLayout, QMessageBox, QInputDialog
 )
+from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QPalette, QColor, QFont
 from DataStructures.Graph import Graph  # Assuming the Graph class is in graph.py
@@ -276,73 +277,104 @@ class OperatingSystemUI(QMainWindow):
         tab = QWidget()
         layout = QVBoxLayout()
 
-        # Main Split Layout (Window 1 and Window 2)
-        split_layout = QHBoxLayout()
+        # ----- Add a Main Title -----
+        main_title = QLabel("Network Manager: Visualize and Control Your Network")
+        main_title.setAlignment(Qt.AlignCenter)
+        main_title.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
+        layout.addWidget(main_title)
 
-        # ---------------- Window 1 ----------------
-        window1_layout = QVBoxLayout()
-        #window1_layout.addWidget(QLabel("Window 1"))
+        # ----- Manage Devices Section -----
+        devices_label = QLabel("Manage Devices: Add or Remove Devices from the Network")
+        devices_label.setAlignment(Qt.AlignCenter)
+        devices_label.setStyleSheet("font-size: 14px; font-weight: bold; margin-top: 10px; margin-bottom: 5px;")
+        layout.addWidget(devices_label)
+
+        # Device Management Section (Window 1)
+        device_section = QVBoxLayout()
 
         # Device Name Input
         self.device_name_input = QLineEdit()
-        self.device_name_input.setPlaceholderText("Device Name (text box)")
-        window1_layout.addWidget(self.device_name_input)
+        self.device_name_input.setPlaceholderText("Device Name (e.g., Router1, Switch2)")
+        self.device_name_input.setFixedHeight(30)  # Set consistent height
+        device_section.addWidget(self.device_name_input)
 
-        # Combo Box for Task Selection
+        # Task Selection Combo Box
         self.device_action_dropdown = QComboBox()
-        self.device_action_dropdown.addItems([
-            "Add Device", "Remove Device"
-        ])
-        window1_layout.addWidget(self.device_action_dropdown)
+        self.device_action_dropdown.addItems(["Add Device", "Remove Device"])
+        self.device_action_dropdown.setFixedHeight(30)
+        device_section.addWidget(self.device_action_dropdown)
 
         # Task Done Button
         self.task_done_btn_window1 = QPushButton("Task Done")
-        window1_layout.addWidget(self.task_done_btn_window1)
+        self.task_done_btn_window1.setStyleSheet("background-color: #88c425; font-size: 12px;")
+        self.task_done_btn_window1.setFixedHeight(35)
         self.task_done_btn_window1.clicked.connect(self.handle_window1_action)
+        device_section.addWidget(self.task_done_btn_window1)
 
-        # Add Window 1 to Split Layout
-        split_layout.addLayout(window1_layout)
+        layout.addLayout(device_section)
 
-        # ---------------- Window 2 ----------------
-        window2_layout = QVBoxLayout()
-        #window2_layout.addWidget(QLabel("Window 2"))
+        # ----- Manage Connections Section -----
+        connections_label = QLabel("Manage Connections: Build or Explore Connections Between Devices")
+        connections_label.setAlignment(Qt.AlignCenter)
+        connections_label.setStyleSheet("font-size: 14px; font-weight: bold; margin-top: 20px; margin-bottom: 5px;")
+        layout.addWidget(connections_label)
+
+        # Connection Management Section (Window 2)
+        connection_section = QVBoxLayout()
 
         # Device A Input
         self.device_a_input = QLineEdit()
-        self.device_a_input.setPlaceholderText("Device A")
-        window2_layout.addWidget(self.device_a_input)
+        self.device_a_input.setPlaceholderText("Device A (e.g., Router1)")
+        self.device_a_input.setFixedHeight(30)
+        connection_section.addWidget(self.device_a_input)
 
         # Device B Input
         self.device_b_input = QLineEdit()
-        self.device_b_input.setPlaceholderText("Device B")
-        window2_layout.addWidget(self.device_b_input)
+        self.device_b_input.setPlaceholderText("Device B (e.g., Laptop1)")
+        self.device_b_input.setFixedHeight(30)
+        connection_section.addWidget(self.device_b_input)
 
-        # Combo Box for Graph Actions
+        # Graph Actions Combo Box
         self.graph_action_dropdown = QComboBox()
         self.graph_action_dropdown.addItems([
-            "Add a Connection", "Remove a Connection", "BFS (Discover Reachable Devices)",
-            "DFS (Explore Connections)", "Dijkstra's Algorithm (Shortest Path)"
+            "Add a Connection", "Remove a Connection",
+            "BFS (Discover Reachable Devices)",
+            "DFS (Explore Connections)",
+            "Dijkstra's Algorithm (Shortest Path)"
         ])
-        window2_layout.addWidget(self.graph_action_dropdown)
+        self.graph_action_dropdown.setFixedHeight(30)
+        connection_section.addWidget(self.graph_action_dropdown)
 
-        # Task Done Button for Window 2
+        # Task Done Button for Connections
         self.task_done_btn_window2 = QPushButton("Task Done")
-        window2_layout.addWidget(self.task_done_btn_window2)
+        self.task_done_btn_window2.setStyleSheet("background-color: #88c425; font-size: 12px;")
+        self.task_done_btn_window2.setFixedHeight(35)
         self.task_done_btn_window2.clicked.connect(self.handle_window2_action)
+        connection_section.addWidget(self.task_done_btn_window2)
 
-        # Add Window 2 to Split Layout
-        split_layout.addLayout(window2_layout)
+        layout.addLayout(connection_section)
 
-        # Add the split layout to the main layout
-        layout.addLayout(split_layout)
+        # ----- Visualize Section -----
+        visualize_label = QLabel("Visualize Your Network Graph")
+        visualize_label.setAlignment(Qt.AlignCenter)
+        visualize_label.setStyleSheet("font-size: 14px; font-weight: bold; margin-top: 20px; margin-bottom: 5px;")
+        layout.addWidget(visualize_label)
 
-        # Visualize Button
         self.visualize_btn = QPushButton("Visualize")
-        layout.addWidget(self.visualize_btn)
+        self.visualize_btn.setStyleSheet("background-color: #4CAF50; color: white; font-size: 14px; font-weight: bold;")
+        self.visualize_btn.setFixedHeight(40)
         self.visualize_btn.clicked.connect(self.visualize_graph)
+        layout.addWidget(self.visualize_btn)
+
+        # ----- Empty State Message -----
+        self.empty_message_label = QLabel("Start by adding a device to build your network.")
+        self.empty_message_label.setAlignment(Qt.AlignCenter)
+        self.empty_message_label.setStyleSheet("color: gray; font-size: 12px; margin-top: 10px;")
+        layout.addWidget(self.empty_message_label)
 
         tab.setLayout(layout)
         return tab
+
 
     def handle_window1_action(self):
         action = self.device_action_dropdown.currentText()
@@ -356,6 +388,9 @@ class OperatingSystemUI(QMainWindow):
             QMessageBox.information(self, "Success", f"Device '{device_name}' removed.")
         else:
             QMessageBox.warning(self, "Error", "Invalid action selected!")
+
+        # Clear input fields
+        self.device_name_input.clear()
 
     def handle_window2_action(self):
         action = self.graph_action_dropdown.currentText()
@@ -385,9 +420,14 @@ class OperatingSystemUI(QMainWindow):
         else:
             QMessageBox.warning(self, "Error", "Invalid action selected!")
 
+        # Clear input fields
+        self.device_a_input.clear()
+        self.device_b_input.clear()
+
     def visualize_graph(self):
         self.graph.visualize()
         QMessageBox.information(self, "Visualize", "Graph visualization complete.")
+
 
 
 def main():
