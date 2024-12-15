@@ -1,31 +1,43 @@
-class SortingAlgorihtm:
+class SortingAlgorithm:
     @staticmethod
-    def merge_sort(arr):
-        if len(arr) > 1:
-            mid = len(arr) // 2
-            left_half = arr[:mid]
-            right_half = arr[mid:]
-            SortingAlgorihtm.merge_sort(left_half)
-            SortingAlgorihtm.merge_sort(right_half)
-            i=j=k=0
-            while i < len(left_half) and j < len(right_half):
-                if left_half[i] < right_half[j]:
-                    arr[k] = left_half[i]
+    def merge_sort(task_history, priority_list):
+        if len(priority_list) > 1:
+            mid = len(priority_list) // 2
+            left_task_history = task_history[:mid]
+            right_task_history = task_history[mid:]
+            left_priority = priority_list[:mid]
+            right_priority = priority_list[mid:]
+
+            SortingAlgorithm.merge_sort(left_task_history, left_priority)
+            SortingAlgorithm.merge_sort(right_task_history, right_priority)
+            
+            i = j = k = 0
+            while i < len(left_priority) and j < len(right_priority):
+                # Compare based on priority for descending order
+                if left_priority[i] > right_priority[j]:  # Prioritize higher priority first
+                    task_history[k] = left_task_history[i]
+                    priority_list[k] = left_priority[i]
                     i += 1
                 else:
-                    arr[k] = right_half[j]
+                    task_history[k] = right_task_history[j]
+                    priority_list[k] = right_priority[j]
                     j += 1
-                k+=1
-            while i<len(left_half):
-                arr[k] = left_half[i]
+                k += 1
+
+            # Handle any remaining elements in the left_half
+            while i < len(left_priority):
+                task_history[k] = left_task_history[i]
+                priority_list[k] = left_priority[i]
                 i += 1
                 k += 1
         
-            while j<len(right_half):
-                arr[k] = right_half[j]
+            # Handle any remaining elements in the right_half
+            while j < len(right_priority):
+                task_history[k] = right_task_history[j]
+                priority_list[k] = right_priority[j]
                 j += 1
                 k += 1
-        return arr
-    
-# arr=[1,4,3,9,55,67,99]
-# print(SortingAlgorihtm.merge_sort(arr))
+
+        return task_history, priority_list
+
+
